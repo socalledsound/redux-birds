@@ -13,8 +13,9 @@ import {
     startTicker,
     tickTime,
     breatheAll,
-
-
+    updateMousePos,
+    rollEyes,
+    resetClicked,
 } from './redux/birds.actions';
 
 import MainView from './components/MainView';
@@ -24,23 +25,31 @@ import { makeBaseBird, makeBird } from './utils';
 
 
 class App extends React.Component {
+    
+    constructor(props){
+        super(props);
+        this.startTicker();
+        setTimeout(() => this.addBird(), 100);
+    }
+
+
 
 
     componentDidMount(){
         
         this.onResize();    
         window.addEventListener("resize", this.onResize);
-        this.startTicker();
+        
         
     }
 
     startTicker = () => {
-        const { startTicker, tickTime, breatheAll, tickerStarted, timeTick, birds } = this.props;
+        const { startTicker, tickTime, breatheAll, tickerStarted } = this.props;
 
-        setTimeout(() => this.initBirds(), 100);
+        
 
         const ticker = () => {
-            const { tickerStarted, timeTick } = this.props;
+            const { timeTick, dragActive, rollEyes, activeID, mousePos, mouseRef } = this.props;
            //console.log(tickerStarted, timeTick, 'in start ticker')
 
                 tickTime();
@@ -50,6 +59,16 @@ class App extends React.Component {
 
                 if(timeTick > 100){
                     breatheAll();
+                }
+
+                if(dragActive && activeID !== null){
+                        console.log(mousePos);
+                        console.log(mouseRef);
+                        const eyeOffset = mousePos.x - mouseRef.x;
+                        console.log(eyeOffset);
+                        rollEyes(activeID, eyeOffset);
+                      
+
                 }
                
 
@@ -70,7 +89,7 @@ class App extends React.Component {
 
 
 
-    initBirds = () => {
+   addBird = () => {
         const { addBird, addBaseBird, checkNeighbors, currentIDX, svgWidth, svgHeight, birds } = this.props;
         console.log(currentIDX, svgHeight);
         const basebird = makeBaseBird(currentIDX);
@@ -84,7 +103,7 @@ class App extends React.Component {
         setTimeout(this.checkBird, 50);   
         const randomVal = Math.random() * 10000
         if(birds.length < GlobalSettings.numBirds){
-            setTimeout(this.initBirds, randomVal);
+            setTimeout(this.addBird, randomVal);
         }
      }
 
@@ -93,7 +112,7 @@ class App extends React.Component {
         
         const thisBird = birds.filter(bird => bird.id === currentIDX)[0];
         console.log(thisBird);
-        if(!thisBird.overlap){
+        if(thisBird!== undefined && !thisBird.overlap){
             //console.log(thisBird.overlap);
             fixBird();
             incrementIDX();    
@@ -113,6 +132,18 @@ class App extends React.Component {
     }
 
 
+    updateMousePos = (x, y) => {
+        const { updateMousePos } = this.props;
+        updateMousePos(x,y);
+
+    }
+
+    resetClicked = (x,y) => {
+        const { resetClicked } = this.props
+        resetClicked();
+    }
+
+
     render(){
         const { svgWidth, svgHeight, birds } = this.props;
         //console.log(svgHeight);
@@ -121,7 +152,8 @@ class App extends React.Component {
                 svgWidth={svgWidth} 
                 svgHeight={svgHeight} 
                 birds={birds}
-
+                updateMousePos={this.updateMousePos}
+                resetClicked={this.resetClicked}
             />
         )
     }
@@ -137,6 +169,10 @@ const mapStateToProps = state => ({
     tickerStarted: state.tickerStarted, 
     timeTick: state.timeTick,
     currentIDX : state.currentIDX,
+    dragActive : state.dragActive,
+    activeID : state.activeID,
+    mousePos: state.mousePos,
+    mouseRef: state.mouseRef,
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -151,6 +187,9 @@ const mapDispatchToProps = dispatch => ({
     incrementIDX : () => dispatch(incrementIDX()),
     removeBird : (idx) => dispatch(removeBird(idx)),
     fixBird : () => dispatch(fixBird()),
+    updateMousePos : (x, y) => dispatch(updateMousePos(x,y)),
+    rollEyes : (id, offset) => dispatch(rollEyes(id, offset)),
+    resetClicked : () => dispatch(resetClicked()),
 })
 
 

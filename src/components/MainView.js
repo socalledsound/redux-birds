@@ -30,11 +30,11 @@ class MainView extends Component {
 
 
     render() {
-        const { svgWidth, svgHeight, birds } = this.props;
+        const { svgWidth, svgHeight, birds, updateMousePos } = this.props;
         return (
             <div
-                // onMouseDown={() => this.props.startTicker()}
-                // onMouseUp={() => this.props.stopTicker()}
+                 onMouseMove={(e) => updateMousePos(e.clientX, e.clientY)}
+                onMouseUp={() => this.props.resetClicked()}
                 style={{ overflow: "hidden" }}
             >
                 

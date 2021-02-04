@@ -20,13 +20,41 @@ class Bird extends React.Component {
 
     }
 
+    calculateLeftEyePos(location, headSize, randomLeftEyeVal, eyeRollOffset){
+        console.log(eyeRollOffset);
+        const startX = location.x - headSize/3 + randomLeftEyeVal - headSize/8;
+        const startY = location.y - headSize + headSize/10;
 
-    breathe(){
+        const rolledX = (location.x + Math.sin(eyeRollOffset/100 ) * headSize);
+        const rolledY = (location.y + Math.cos(eyeRollOffset/100) * headSize);
+
+        return {
+            x: rolledX,
+            y: rolledY
+    }
 
     }
 
+    calculateRightEyePos(location, headSize, randomRightEyeVal, eyeRollOffset){
+        console.log(eyeRollOffset);
+        const startX = location.x + headSize/3 - randomRightEyeVal + headSize/8;
+        const startY = location.y - headSize + headSize/10;
+
+        const rolledX = (location.x  + Math.sin(3.14 + eyeRollOffset/100 ) * headSize);
+        const rolledY = (location.y + Math.cos(3.14 + eyeRollOffset/100) * headSize);
+
+        return {
+            x: rolledX,
+            y: rolledY
+    }
+
+    }
+    dragStart(){
+        console.log('dragging');
+    }
+
     playSound(){
-        // this.sound.play();
+        
     }
 
     stopGrowing(){
@@ -42,9 +70,8 @@ class Bird extends React.Component {
        
     }
 
-
     render(){
-        const {id, location, headSize, headColor1, headColor2, opacity, randomLeftEyeVal, randomRightEyeVal, irisColor, changeEyeColor, clicked } = this.props;
+        const {id, location, headSize, headColor1, headColor2, opacity, randomLeftEyeVal, randomRightEyeVal, irisColor, changeEyeColor, clicked, eyeRollOffset } = this.props;
         if(!clicked){
             return (
                 <g className="bird" id={`bird${id}`} style={{position: 'absolute'}}  onMouseDown={() => this.updateClicked(id)} onMouseUp={() => this.updateClicked(id)} onMouseEnter={() => changeEyeColor(id)} onMouseLeave={() => changeEyeColor(id)}>
@@ -56,13 +83,15 @@ class Bird extends React.Component {
             </g>
             )
         } else {
+            const leftEyePos = this.calculateLeftEyePos(location, headSize, randomLeftEyeVal, eyeRollOffset);
+            const rightEyePos = this.calculateRightEyePos(location, headSize, randomLeftEyeVal, eyeRollOffset);
             return (
                 <g className="bird" id={`bird${id}`} style={{position: 'absolute'}}  onMouseDown={() => this.updateClicked(id)} onMouseUp={() => this.updateClicked(id)} onMouseEnter={() => changeEyeColor(id)} onMouseLeave={() => changeEyeColor(id)}>
                 <Head x={location.x} y={location.y} headSize={headSize} headColor1={headColor1} headColor2={headColor2} opacity={opacity}/> 
                 
-                <Eye x={location.x - headSize/3 + randomLeftEyeVal - headSize/8} y={location.y - headSize + headSize/10} size={headSize/3} eyeWhiteColor={'#FFF'} irisColor={irisColor} pupilColor={'#000'} opacity={opacity}/>
-                <Eye x={location.x + headSize/3 - randomRightEyeVal + headSize/8} y={location.y - headSize + headSize/10} size={headSize/3} eyeWhiteColor={'#FFF'} irisColor={irisColor} pupilColor={'#000'} opacity={opacity}/>
-                <Beak x={location.x} y={location.y - headSize * 0.9} width={headSize/9} height={headSize * 0.7} opacity={opacity}/>
+                <Eye x={leftEyePos.x} y={leftEyePos.y} size={headSize/3} eyeWhiteColor={'#FFF'} irisColor={irisColor} pupilColor={'#000'} opacity={opacity}/>
+                <Eye x={rightEyePos.x} y={rightEyePos.y} size={headSize/3} eyeWhiteColor={'#FFF'} irisColor={irisColor} pupilColor={'#000'} opacity={opacity}/>
+                <Beak x={location.x} y={location.y - headSize * 0.6} width={headSize/6} height={headSize * 0.7} opacity={opacity}/>
             </g>
             )
         }

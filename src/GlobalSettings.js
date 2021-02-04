@@ -4,7 +4,7 @@ const GlobalSettings = {
     sounds: howls,
     numSounds: 3,
     numBirds: 200,
-    minHeadSize: 20,
+    minHeadSize: 50,
     toCenterResolution: 100,
     toEdgeResolution: 100,
     growResolution: 30,

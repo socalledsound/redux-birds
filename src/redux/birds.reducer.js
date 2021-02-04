@@ -25,7 +25,10 @@ const INITIAL_STATE = {
     svgHeight: GlobalSettings.defaultHeight,
     currentIDX: 0,
     timeTick: 0,
+    mousePos: {x: 0, y: 0},
     tickerStarted: false,
+    dragActive: false,
+    activeID: null,
     birdBaseValues: [],
     birds: [],
 }
@@ -128,13 +131,40 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
         case BirdActionTypes.UPDATE_CLICKED :
             
             const clickedBirds = [...state.birds];
-            clickedBirds[action.payload.idx].clicked = !clickedBirds[action.payload.idx].clicked;    
+            clickedBirds[action.payload.idx].clicked = !clickedBirds[action.payload.idx].clicked;   
+            const newActiveID = clickedBirds[action.payload.idx].clicked ? action.payload.idx : null;
+            const newDragActive = clickedBirds[action.payload.idx].clicked ? true : false;
         
             return {
                 ...state,
                 birds: clickedBirds,
+                dragActive: newDragActive,
+                activeID: newActiveID,
+                mouseRef: state.mousePos,
             }
 
+
+        case BirdActionTypes.UPDATE_MOUSE_POS :
+            return {
+                ...state,
+                mousePos: {x: action.payload.x, y: action.payload.y}
+            }
+
+        case BirdActionTypes.RESET_CLICKED :
+            const resetBirds = [...state.birds].map(bird => {
+                const newObj = {
+                    ...bird,
+                    clicked: false,
+                }
+                return newObj
+            });
+        
+            return {
+                ...state,
+                birds: resetBirds,
+                dragActive: false,
+                activeId: null,
+            }    
 
         case BirdActionTypes.RESIZE_SCREEN :
             console.log(state.currentIDX);
@@ -154,6 +184,7 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
                 svgHeight: action.payload.height,
                 // birds: resizedBirdsArray,
             }
+
         case BirdActionTypes.CHANGE_EYE_COLOR : 
             const toggledBirds = [...state.birds];
             const toggle = !toggledBirds[action.payload.id].eyeToggle;
@@ -163,6 +194,15 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 birds: toggledBirds
+
+            }    
+        case BirdActionTypes.ROLL_EYES :
+            const eyeRollBirds = [...state.birds];
+            eyeRollBirds[action.payload.id].eyeRollOffset = action.payload.offset;
+            console.log(action.payload.offset);
+            return {
+                ...state,
+                birds: eyeRollBirds,
 
             }    
 

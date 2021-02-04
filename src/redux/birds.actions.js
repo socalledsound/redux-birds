@@ -112,6 +112,23 @@ export const updateClicked = (idx) => {
     }
 }
 
+export const resetClicked = () => {
+    return {
+        type : BirdActionTypes.RESET_CLICKED, 
+
+    }
+}
+
+export const updateMousePos = (x, y) => {
+    return {
+        type: BirdActionTypes.UPDATE_MOUSE_POS,
+        payload: {
+            x,
+            y
+        }
+    }
+}
+
 export const breatheAll = () => {
     return {
         type : BirdActionTypes.BREATHE_ALL,
@@ -119,4 +136,12 @@ export const breatheAll = () => {
     }
 }
 
-
+export const rollEyes = (id, offset) => {
+    return {
+        type: BirdActionTypes.ROLL_EYES,
+        payload: {
+            id,
+            offset
+        }
+    }
+}
