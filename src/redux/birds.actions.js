@@ -154,3 +154,9 @@ export const rollEyes = (id, offsetX, offsetY) => {
         }
     }
 }
+
+export const moveEyes = () => {
+    return {
+        type: BirdActionTypes.MOVE_EYES,
+    }
+}

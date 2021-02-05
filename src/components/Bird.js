@@ -8,8 +8,8 @@ import Head from './Head';
 import Eye from './Eye';
 import Beak from './Beak';
 import PlayBeak from './PlayBeak';
-import { audioContext } from '../sound-utils';
-import GlobalSettings from '../GlobalSettings';
+// import { audioContext } from '../sound-utils';
+// import GlobalSettings from '../GlobalSettings';
 
 class Bird extends React.Component {
     constructor(props){
@@ -26,12 +26,14 @@ class Bird extends React.Component {
 
     calculateLeftEyePos(location, headSize, randomLeftEyeVal, eyeRollOffset){
         console.log(location, headSize, randomLeftEyeVal, eyeRollOffset.x);
-        const startX = location.x - headSize/3 + randomLeftEyeVal - headSize/8;
-        const startY = location.y - headSize + headSize/10;
+        // const startX = location.x - headSize/3 + randomLeftEyeVal - headSize/8;
+        // const startY = location.y - headSize + headSize/10;
 
-        const rolledX = (location.x + Math.sin(eyeRollOffset.x/100 ) * headSize - eyeRollOffset.y);
+        
+
+        const rolledX = (location.x + Math.sin(eyeRollOffset.x/100 ) * (headSize * (0.9 - Math.abs(eyeRollOffset.y)/100)));
        
-        const rolledY = (location.y + Math.cos(eyeRollOffset.x/100) * headSize - eyeRollOffset.y);
+        const rolledY = (location.y + Math.cos(eyeRollOffset.x/100) * (headSize * (0.9 - Math.abs(eyeRollOffset.y)/100)));
         console.log(eyeRollOffset, rolledX, rolledY);
         return {
             x: rolledX,
@@ -42,11 +44,11 @@ class Bird extends React.Component {
 
     calculateRightEyePos(location, headSize, randomRightEyeVal, eyeRollOffset){
         console.log(eyeRollOffset);
-        const startX = location.x + headSize/3 - randomRightEyeVal + headSize/8;
-        const startY = location.y - headSize + headSize/10;
+        // const startX = location.x + headSize/3 - randomRightEyeVal + headSize/8;
+        // const startY = location.y - headSize + headSize/10;
 
-        const rolledX = (location.x  + Math.sin(3.14 + eyeRollOffset.x/100 ) * headSize + eyeRollOffset.y);
-        const rolledY = (location.y + Math.cos(3.14 + eyeRollOffset.x/100) * headSize + eyeRollOffset.y);
+        const rolledX = (location.x  + Math.sin(3.14 + eyeRollOffset.x/100 ) * (headSize * (0.9 - Math.abs(eyeRollOffset.y)/100)));
+        const rolledY = (location.y + Math.cos(3.14 + eyeRollOffset.x/100) * (headSize * (0.9 - Math.abs(eyeRollOffset.y)/100)));
 
         return {
             x: rolledX,
@@ -75,7 +77,7 @@ class Bird extends React.Component {
 
     render(){
         const {id, location, headSize, headColor1, headColor2, opacity, randomLeftEyeVal, randomRightEyeVal, irisColor, changeEyeColor, clicked, eyeRollOffset } = this.props;
-        // console.log(eyeRollOffset);
+        console.log(randomLeftEyeVal);
         if(!clicked){
             return (
                 <g className="bird" id={`bird${id}`} style={{position: 'absolute'}}  onMouseDown={() => this.updateClicked(id)} onMouseUp={() => this.updateClicked(id)} onMouseEnter={() => changeEyeColor(id)} onMouseLeave={() => changeEyeColor(id)}>

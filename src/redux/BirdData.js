@@ -28,12 +28,15 @@ class BirdData {
         this.randomLeftEyeVal = 0;
         this.randomRightEyeVal = 0;
         this.coinVal = 0.9999;
-        this.originalCoinVal  = 0.9999;
-        this.fastCoinVal  = 0.995;
+        this.slowCoinVal  = 0.999;
+        this.fastCoinVal  = 0.99;
+       
+        this.eyeMoveVal = Math.random() * 3 + 2;
         this.breatheRate = Math.random()/10;
         this.eyeRollOffset = {x: 0, y: 0};
         this.theta = 0;
         this.opacity = 0.0;
+        this.showing= false;
         this.eyeToggle  = false;
         this.breathe = true;
         this.front  = false;

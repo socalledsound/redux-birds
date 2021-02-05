@@ -16,6 +16,7 @@ import {
     breatheAll,
     updateMousePos,
     rollEyes,
+    moveEyes,
     resetClicked,
 } from './redux/birds.actions';
 
@@ -95,7 +96,7 @@ class App extends React.Component {
         
 
         const ticker = () => {
-            const { timeTick, dragActive, rollEyes, activeID, mousePos, mouseRef } = this.props;
+            const { timeTick, dragActive, rollEyes, moveEyes, activeID, mousePos, mouseRef } = this.props;
            //console.log(tickerStarted, timeTick, 'in start ticker')
             
                 tickTime();
@@ -105,6 +106,8 @@ class App extends React.Component {
 
                 if(timeTick > 100){
                     breatheAll();
+                    moveEyes();
+                    
                 }
 
                 if(dragActive && activeID !== null){
@@ -181,7 +184,7 @@ class App extends React.Component {
      }
 
      playSound(idx, eyeOffsetX, eyeOffsetY){
-        const { buffers} = this.props;
+        // const { buffers} = this.props;
         const buf = eyeOffsetX < 0 ? this.buffers[idx%GlobalSettings.numSounds] : this.reversedBuffers[idx%GlobalSettings.numSounds];
         console.log(buf.duration);
 
@@ -276,6 +279,7 @@ const mapDispatchToProps = dispatch => ({
     fixBird : () => dispatch(fixBird()),
     updateMousePos : (x, y) => dispatch(updateMousePos(x,y)),
     rollEyes : (id, offsetX, offsetY) => dispatch(rollEyes(id, offsetX, offsetY)),
+    moveEyes : () => dispatch(moveEyes()),
     resetClicked : () => dispatch(resetClicked()),
 })
 

@@ -78,22 +78,22 @@ export const checkNeighbors = (thisThing, others) => {
 
 }
 
-const getClosestNeighbor = (bird, birds) => {
+// const getClosestNeighbor = (bird, birds) => {
 
-    const otherBirds = birds.filter( otherBird => otherBird.id !== bird.id )
+//     const otherBirds = birds.filter( otherBird => otherBird.id !== bird.id )
 
-    const withDistances = otherBirds.map( otherBird => {
-        const dx = otherBird.location.x - bird.location.x;
-        const dy = otherBird.location.y - bird.location.y;  
-        return {
-          ...otherBird,
-          distance: Math.sqrt(dx * dx + dy * dy),
-        }
-    })
-    const sorted = withDistances.sort((a,b) => (a.distance > b.distance) ? 1 : -1);
-    return sorted[0]
+//     const withDistances = otherBirds.map( otherBird => {
+//         const dx = otherBird.location.x - bird.location.x;
+//         const dy = otherBird.location.y - bird.location.y;  
+//         return {
+//           ...otherBird,
+//           distance: Math.sqrt(dx * dx + dy * dy),
+//         }
+//     })
+//     const sorted = withDistances.sort((a,b) => (a.distance > b.distance) ? 1 : -1);
+//     return sorted[0]
 
-}
+// }
 
 export const getDistance = (pos1, pos2) => {
   const dx = pos1.x - pos2.x;
@@ -103,7 +103,7 @@ export const getDistance = (pos1, pos2) => {
 
 
 export const getAntiSocialDirection = (bird, birds) => {
-      const closest =  getClosestNeighbor(bird, birds);
+      // const closest =  getClosestNeighbor(bird, birds);
       // console.log(closest);
 
       return [0,0]
@@ -119,3 +119,8 @@ export const makeBird = (birdbasebird, svgWidth, svgHeight) => {
   return newBird
 }
 
+
+export const checkRandomEyeMove = (val, moveVal) => {
+    const coin = Math.random() > val ? true : false;
+    return coin ? Math.random() * moveVal - moveVal : 0 
+}

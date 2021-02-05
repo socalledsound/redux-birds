@@ -19,5 +19,6 @@ export const BirdActionTypes = {
     BREATHE_ALL : 'BREATHE_ALL',
     UPDATE_MOUSE_POS : 'UPDATE_MOUSE_POS',
     ROLL_EYES : 'ROLL_EYES',
+    MOVE_EYES : 'MOVE_EYES',
 
 }

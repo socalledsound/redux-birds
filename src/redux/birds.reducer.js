@@ -1,9 +1,9 @@
 import GlobalSettings from '../GlobalSettings';
 import { BirdActionTypes } from './birds.actions.types';
-import BirdData from './BirdData';
+// import BirdData from './BirdData';
 // import BirdBaseValues from './BirdBaseValues';
-import { checkNeighbors, getAntiSocialDirection } from '../utils';
-import Bird from '../components/Bird';
+import { checkRandomEyeMove } from '../utils';
+// import Bird from '../components/Bird';
 
 
 // const initBirds = Array.from({ length : 3 }, (_, index) => {
@@ -156,6 +156,21 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
                     ...state,
                     birds: breatheBirds
                 }     
+
+        case BirdActionTypes.MOVE_EYES :
+            const eyeBirds = [...state.birds]
+                                    .map( bird => {
+                                        const prob = bird.eyeToggle ? bird.fastCoinVal : bird.slowCoinVal;
+                                        bird.randomLeftEyeVal = checkRandomEyeMove(prob, bird.eyeMoveVal);
+                                        bird.randomRightEyeVal = checkRandomEyeMove(prob, bird.eyeMoveVal);
+                                        return bird
+                                    });
+                return {
+                    ...state,
+                    birds: eyeBirds
+                }
+
+
         case BirdActionTypes.UPDATE_CLICKED :
             
             const clickedBirds = [...state.birds];
