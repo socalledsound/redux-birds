@@ -23,12 +23,14 @@ import Bird from '../components/Bird';
 const INITIAL_STATE = {
     svgWidth: GlobalSettings.defaultWidth,
     svgHeight: GlobalSettings.defaultHeight,
+    initResize: false,
     currentIDX: 0,
     timeTick: 0,
     mousePos: {x: 0, y: 0},
     tickerStarted: false,
     dragActive: false,
     activeID: null,
+    buffers: [],
     birdBaseValues: [],
     birds: [],
 }
@@ -39,6 +41,32 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
 //    const { birdBaseValues, birds, currentIDX } = state;
 
     switch(action.type) {
+
+        case BirdActionTypes.RESIZE_SCREEN :
+            console.log(state.currentIDX);
+            // const resizedBirdsArray = Array.from({ length : state.currentIDX }, (_, i) => {
+            //     if( state.currentIDX !== 0){
+            //         // console.log(resized[i]);
+            //         return new BirdData(state.birdBaseValues[i],  action.payload.width, action.payload.height)
+            //     } else {
+            //         return null
+            //     }
+                
+            // })
+            //console.log(action.payload);
+            return {
+                ...state,
+                svgWidth: action.payload.width,
+                svgHeight: action.payload.height,
+                initResize: true,
+                // birds: resizedBirdsArray,
+            }
+        case BirdActionTypes.UPDATE_BUFFERS :
+            console.log(action.payload);
+            return {
+                ...state,
+                buffers: action.payload.buffers
+            }
 
         case BirdActionTypes.ADD_BASE_BIRD :
             const newBirdBases = [...state.birdBaseValues].concat([action.payload.birdbase])
@@ -165,25 +193,6 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
                 dragActive: false,
                 activeId: null,
             }    
-
-        case BirdActionTypes.RESIZE_SCREEN :
-            console.log(state.currentIDX);
-            // const resizedBirdsArray = Array.from({ length : state.currentIDX }, (_, i) => {
-            //     if( state.currentIDX !== 0){
-            //         // console.log(resized[i]);
-            //         return new BirdData(state.birdBaseValues[i],  action.payload.width, action.payload.height)
-            //     } else {
-            //         return null
-            //     }
-                
-            // })
-            //console.log(action.payload);
-            return {
-                ...state,
-                svgWidth: action.payload.width,
-                svgHeight: action.payload.height,
-                // birds: resizedBirdsArray,
-            }
 
         case BirdActionTypes.CHANGE_EYE_COLOR : 
             const toggledBirds = [...state.birds];

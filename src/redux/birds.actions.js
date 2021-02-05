@@ -11,6 +11,15 @@ export const resizeScreen = (width, height) => {
     };
 }
 
+export const updateBuffers = ( buffers) => {
+    return {
+        type: BirdActionTypes.UPDATE_BUFFERS,
+        payload : {
+            buffers
+        }
+    }
+}
+
 export const checkForOverlaps = () => {
     return {
         type: BirdActionTypes.CHECK_FOR_OVERLAPS,
@@ -136,12 +145,12 @@ export const breatheAll = () => {
     }
 }
 
-export const rollEyes = (id, offset) => {
+export const rollEyes = (id, offsetX, offsetY) => {
     return {
         type: BirdActionTypes.ROLL_EYES,
         payload: {
             id,
-            offset
+            offset: { x: offsetX, y: offsetY },
         }
     }
 }

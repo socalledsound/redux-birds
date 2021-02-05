@@ -6,7 +6,7 @@ class BirdData {
         const {id, randomXScaler, randomYScaler, randomHeadSizeScaler, color1, color2, color3} = baseBirdData;
         console.log(randomHeadSizeScaler, svgHeight, GlobalSettings.minHeadSize);
         this.id = id;
-        this.howl = GlobalSettings.sounds[id % GlobalSettings.numSounds];
+        // this.howl = GlobalSettings.sounds[id % GlobalSettings.numSounds];
         this.baseHeadSize = randomHeadSizeScaler * svgHeight/10 + GlobalSettings.minHeadSize;
         this.clickedHeadSize = this.baseHeadSize + 10;
         this.startHeadSize = this.baseHeadSize;
@@ -31,7 +31,7 @@ class BirdData {
         this.originalCoinVal  = 0.9999;
         this.fastCoinVal  = 0.995;
         this.breatheRate = Math.random()/10;
-        this.eyeRollOffset = 0;
+        this.eyeRollOffset = {x: 0, y: 0};
         this.theta = 0;
         this.opacity = 0.0;
         this.eyeToggle  = false;
