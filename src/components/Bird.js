@@ -82,7 +82,7 @@ class Bird extends React.Component {
     }
 
     render(){
-        const {id, location, headSize, headColor1, headColor2, opacity, randomLeftEyeVal, randomRightEyeVal, irisColor, clicked, eyeRollOffset, activeID, dragActive } = this.props;
+        const {id, location, headSize, headColor1, headColor2, opacity, randomLeftEyeVal, randomRightEyeVal, irisColor, clicked, eyeRollOffset } = this.props;
         if(clicked){
             // console.log(clicked, id, activeID, eyeRollOffset, dragActive);
         }
