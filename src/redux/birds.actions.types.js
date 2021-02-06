@@ -22,5 +22,8 @@ export const BirdActionTypes = {
     UPDATE_MOUSE_POS : 'UPDATE_MOUSE_POS',
     ROLL_EYES : 'ROLL_EYES',
     MOVE_EYES : 'MOVE_EYES',
+    ADD_BIRDS : 'ADD_BIRDS',
+    ADD_BASE_BIRDS : 'ADD_BASE_BIRDS',
+    HATCH_BIRDS : 'HATCH_BIRDS',
 
 }

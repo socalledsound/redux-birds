@@ -7,7 +7,7 @@ import {
     checkForOverlaps,
     addBaseBird,
     addBird,
-    checkNeighbors,
+    // checkNeighbors,
     incrementIDX,
     removeBird,
     fixBird,
@@ -18,11 +18,14 @@ import {
     rollEyes,
     moveEyes,
     resetClicked,
+    addBirds,
+    addBaseBirds,
+    hatchBirds,
 } from './redux/birds.actions';
 
 import MainView from './components/MainView';
 import GlobalSettings from './GlobalSettings';
-import { makeBaseBird, makeBird, getDistance } from './utils';
+import { makeBaseBird, makeBird, getDistance, checkNeighbors } from './utils';
 import { audioContext, soundFilesArray, initBuffer, reverseBuffers } from './sound-utils';
 
 
@@ -33,13 +36,20 @@ class App extends React.Component {
         super(props);
         this.state = {
             isPlaying: false,
+            haveBirds: false,
+            // hatchCount: 0,
         }
         this.source = null;
         // this.startTicker();
         this.audioContext = audioContext;
         this.lastMousePos = {x : 0, y: 0};
+        this.hatchCount = 0;
         this.buffers = [];
         this.reversedBuffers = [];
+        this.buildBirdsArray = [];
+        this.baseBirdsArray = [];
+        this.started = false;
+        this.hatchCount = 0;
         // setTimeout(() => this.addBird(), 100);
     }
 
@@ -52,16 +62,29 @@ class App extends React.Component {
            
         window.addEventListener("resize", this.onResize);
         this.onResize().then((response, reject) => {
-            //console.log(response); 
-            this.addBird();
-            this.startTicker();
+            console.log(response); 
         })
         this.initSoundBuffers().then((buffers) => {
             this.buffers = buffers;
             this.reversedBuffers = reverseBuffers(buffers);
             updateBuffers(buffers)
         });
+        if(!this.started){
+            this.initBirds(window.innerWidth, window.innerHeight);
+                        
+        }
 
+        // const birdsReady = new Promise((resolve, reject) => {
+        //     if(this.buildBirdsArray === GlobalSettings.numBirds){
+        //         resolve();
+        //         console.log('triggered');
+        //     }
+        // }).then(()=>{
+        //     this.started = true;
+        //     console.log(this.buildBirdsArray);
+        //     addBirds(this.buildBirdsArray);
+        //     addBaseBirds(this.baseBirdsArray);
+        // })
     }
 
 
@@ -97,12 +120,25 @@ class App extends React.Component {
 
         const ticker = () => {
             const { timeTick, dragActive, rollEyes, moveEyes, activeID, mousePos, mouseRef } = this.props;
+            // const { hatchCount } = this.state
            //console.log(tickerStarted, timeTick, 'in start ticker')
             
                 tickTime();
                 // incrementCircleSize();
                 // checkNeighbors();
                // addChildCircle(currentIDX);
+
+
+                // if(this.hatchCount < 100){
+                //     if(birds !== undefined){
+                //         hatchBirds(this.hatchCount);
+                //         this.hatchCount++;
+                //     }
+                    
+                //     // this.setState({hatchCount: hatchCount + 1})
+                // }
+
+
 
                 if(timeTick > 100){
                     breatheAll();
@@ -143,33 +179,92 @@ class App extends React.Component {
         
      }
 
+     buildBirds = (width, height) => {
+         const { addBirds, addBaseBirds } = this.props;
 
-
-
-
-   addBird = () => {
-        const { addBird, addBaseBird, checkNeighbors, currentIDX, svgWidth, svgHeight, birds } = this.props;
-        //console.log(currentIDX, svgHeight);
-        const basebird = makeBaseBird(currentIDX);
-        // console.log(basebird);
-        addBaseBird(basebird);
-        const bird = makeBird(basebird, svgWidth, svgHeight);
-        //console.log(bird);
-        addBird(bird);
-        checkNeighbors();
-        
-        setTimeout(this.checkBird, 50);   
-        const randomVal = Math.random() * GlobalSettings.birdWaitVal;
-        if(GlobalSettings.birdWaitVal > 100){
-            GlobalSettings.birdWaitval -= 250;
+        let idx = 0;
+        while(this.buildBirdsArray.length < GlobalSettings.numBirds) {
+            
+            const basebird = makeBaseBird(idx);
+            const bird = makeBird(basebird, width, height);
+            if(!checkNeighbors(bird, this.buildBirdsArray)){
+                this.buildBirdsArray.push(bird);
+                this.baseBirdsArray.push(basebird);
+                idx++;
+            };
         }
-        if(GlobalSettings.minHeadSize > 10){
-            GlobalSettings.minHeadSize -= 3;
-        }
-        if(birds.length < GlobalSettings.numBirds){
-            setTimeout(this.addBird, randomVal);
-        }
+
+       
+        addBirds(this.buildBirdsArray);
+        addBaseBirds(this.baseBirdsArray);
+        console.error('started', this.buildBirdsArray);
+        this.startTicker();
+        // this.hatchAll();
+
+
+        // if(this.buildBirdsArray.length < GlobalSettings.numBirds){
+        //     const num = GlobalSettings.numBirds - this.buildBirdsArray.length;
+        //     for(let i = 0; i < num; i ++) {
+        //         const basebird = makeBaseBird(this.idx  * (i + 20));
+        //         const bird = makeBird(basebird, width, height);
+        //         if(!checkNeighbors(bird, this.buildBirdsArray)){
+        //             this.buildBirdsArray.push(bird);
+        //             this.baseBirdsArray.push(basebird);
+        //         };
+        //     }
+        // }
+        // if(this.buildBirdsArray.length < GlobalSettings.numBirds){
+        //     this.initBirds(window.innerWidth, window.innerHeight);
+        // } else {
+        //     this.startTicker();
+        //     addBirds(this.buildBirdsArray);
+        //     addBaseBirds(this.baseBirdsArray);
+        //     console.error('started', this.buildBirdsArray);
+
+        // }
+
+
      }
+
+
+     initBirds = (width, height) => {
+        this.buildBirds(width, height);
+     }
+
+
+
+    //  hatchAll = () => {
+    //      const { birds } = this.props;
+
+    //      birds.forEach( bird => {
+    //         bird.startTween
+    //      })
+    //  }
+
+
+//    addBird = () => {
+//         const { addBird, addBaseBird, checkNeighbors, currentIDX, svgWidth, svgHeight, birds } = this.props;
+//         //console.log(currentIDX, svgHeight);
+//         const basebird = makeBaseBird(currentIDX);
+//         // console.log(basebird);
+//         addBaseBird(basebird);
+//         const bird = makeBird(basebird, svgWidth, svgHeight);
+//         //console.log(bird);
+//         addBird(bird);
+//         checkNeighbors();
+        
+//         setTimeout(this.checkBird, 50);   
+//         const randomVal = Math.random() * GlobalSettings.birdWaitVal;
+//         if(GlobalSettings.birdWaitVal > 100){
+//             GlobalSettings.birdWaitval -= 250;
+//         }
+//         if(GlobalSettings.minHeadSize > 10){
+//             GlobalSettings.minHeadSize -= 3;
+//         }
+//         if(birds.length < GlobalSettings.numBirds){
+//             setTimeout(this.addBird, randomVal);
+//         }
+//      }
 
      checkBird = () => {
         const { fixBird, incrementIDX, removeBird, birds, currentIDX } = this.props;
@@ -232,6 +327,7 @@ class App extends React.Component {
 
     render(){
         const { svgWidth, svgHeight, birds } = this.props;
+       // console.log(birds);
        //console.log(buffers);
         //console.log(svgHeight);
         return (
@@ -275,7 +371,7 @@ const mapDispatchToProps = dispatch => ({
     checkForOverlaps : () => dispatch(checkForOverlaps()),
     addBaseBird : (basebird) => dispatch(addBaseBird(basebird)),
     addBird : (bird) => dispatch(addBird(bird)),
-    checkNeighbors : () => dispatch(checkNeighbors()),
+    // checkNeighbors : () => dispatch(checkNeighbors()),
     incrementIDX : () => dispatch(incrementIDX()),
     removeBird : (idx) => dispatch(removeBird(idx)),
     fixBird : () => dispatch(fixBird()),
@@ -283,6 +379,9 @@ const mapDispatchToProps = dispatch => ({
     rollEyes : (id, offsetX, offsetY) => dispatch(rollEyes(id, offsetX, offsetY)),
     moveEyes : () => dispatch(moveEyes()),
     resetClicked : () => dispatch(resetClicked()),
+    addBirds : (arr) => dispatch(addBirds(arr)),
+    addBaseBirds : (arr) => dispatch(addBaseBirds(arr)),
+    hatchBirds : (idx) => dispatch(hatchBirds(idx)),
 })
 
 

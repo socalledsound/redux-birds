@@ -61,7 +61,7 @@ export const checkNeighbors = (thisThing, others) => {
                const dx = other.location.x - thisThing.location.x;
                const dy = other.location.y - thisThing.location.y;
                const dist = Math.sqrt(dx * dx + dy * dy);
-               if(dist < other.headSize + thisThing.headSize){
+               if(dist < other.baseHeadSize + thisThing.baseHeadSize){
                 //  console.log('found');
                    return true
                } else {

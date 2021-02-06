@@ -68,6 +68,33 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
                 buffers: action.payload.buffers
             }
 
+
+        case BirdActionTypes.ADD_BASE_BIRDS : 
+            return {
+                ...state,
+                basebirds: action.payload.basebirds
+            }    
+
+        case BirdActionTypes.ADD_BIRDS : 
+            return {
+                ...state,
+                birds: action.payload.birds
+            }   
+            
+        case BirdActionTypes.HATCH_BIRDS : 
+        console.log(state.birds, 'in reducer');
+        console.log(action.payload, 'in reducer');
+        const updatedBirds = [...state.birds];
+        if(updatedBirds.length > 0){
+            updatedBirds.map( bird => bird.headSize = bird.startTween[action.payload.idx]);
+        }
+        
+            
+        return {
+            ...state,
+             birds: updatedBirds,
+        }    
+
         case BirdActionTypes.ADD_BASE_BIRD :
             const newBirdBases = [...state.birdBaseValues].concat([action.payload.birdbase])
             return {

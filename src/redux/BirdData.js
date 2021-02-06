@@ -9,7 +9,7 @@ class BirdData {
         // this.howl = GlobalSettings.sounds[id % GlobalSettings.numSounds];
         this.baseHeadSize = randomHeadSizeScaler * svgHeight/10 + GlobalSettings.minHeadSize;
         this.clickedHeadSize = this.baseHeadSize + 10;
-        this.startHeadSize = this.baseHeadSize;
+        this.startHeadSize = 5;
         this.headSize = this.baseHeadSize;
         this.smallHeadSize = GlobalSettings.minHeadSize;
         this.largeHeadSize = GlobalSettings.minHeadSize * 6;
@@ -20,6 +20,7 @@ class BirdData {
         this.toEdge = tweenToDestination(this.currentScreenCenter, GlobalSettings.edge, GlobalSettings.toCenterResolution);
         this.toBig = mySimpleTween(this.clickedHeadSize, GlobalSettings.maxHeadSize, GlobalSettings.growResolution);
         this.toSmall = mySimpleTween(GlobalSettings.maxHeadSize, GlobalSettings.minHeadSize, GlobalSettings.shrinkResolution);
+        this.startTween = mySimpleTween(this.startHeadSize, this.baseHeadSize, GlobalSettings.startGrowResolution);
         this.headColor1 = color1;
         this.headColor2 = color2;
         this.mainIrisColor = color3;
@@ -30,12 +31,11 @@ class BirdData {
         this.coinVal = 0.9999;
         this.slowCoinVal  = 0.999;
         this.fastCoinVal  = 0.99;
-       
         this.eyeMoveVal = Math.random() * 3 + 2;
         this.breatheRate = Math.random()/10;
         this.eyeRollOffset = {x: 0, y: 0};
         this.theta = 0;
-        this.opacity = 0.0;
+        this.opacity = 1.0;
         this.showing= false;
         this.eyeToggle  = false;
         this.breathe = true;

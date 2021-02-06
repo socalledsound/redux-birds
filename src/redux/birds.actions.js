@@ -20,6 +20,33 @@ export const updateBuffers = ( buffers) => {
     }
 }
 
+export const addBirds = (birds) => {
+    return {
+        type: BirdActionTypes.ADD_BIRDS,
+        payload : {
+            birds
+        }
+    }
+}
+
+export const addBaseBirds = ( basebirds) => {
+    return {
+        type: BirdActionTypes.ADD_BASE_BIRDS, 
+        payload: {
+            basebirds
+        }
+    }
+}
+
+export const hatchBirds = (idx) => {
+    return {
+        type :  BirdActionTypes.HATCH_BIRDS,
+        payload : {
+            idx
+        }
+    }
+}
+
 export const checkForOverlaps = () => {
     return {
         type: BirdActionTypes.CHECK_FOR_OVERLAPS,
@@ -178,3 +205,5 @@ export const moveEyes = () => {
         type: BirdActionTypes.MOVE_EYES,
     }
 }
+
+
