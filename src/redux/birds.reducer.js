@@ -1,6 +1,6 @@
 import GlobalSettings from '../GlobalSettings';
 import { BirdActionTypes } from './birds.actions.types';
-// import BirdData from './BirdData';
+import BirdData from './BirdData';
 // import BirdBaseValues from './BirdBaseValues';
 import { checkRandomEyeMove } from '../utils';
 // import Bird from '../components/Bird';
@@ -51,15 +51,15 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
             //     } else {
             //         return null
             //     }
-                
-            // })
-            //console.log(action.payload);
+            console.log(state.birdBaseValues); 
+            const resizedBirdsArray = [...state.birdBaseValues].map(bb => new BirdData(bb, action.payload.width, action.payload.height));
+        console.log(resizedBirdsArray);
             return {
                 ...state,
                 svgWidth: action.payload.width,
                 svgHeight: action.payload.height,
                 initResize: true,
-                // birds: resizedBirdsArray,
+                birds: resizedBirdsArray,
             }
         case BirdActionTypes.UPDATE_BUFFERS :
             //console.log(action.payload);
@@ -72,7 +72,7 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
         case BirdActionTypes.ADD_BASE_BIRDS : 
             return {
                 ...state,
-                basebirds: action.payload.basebirds
+                birdBaseValues: action.payload.basebirds
             }    
 
         case BirdActionTypes.ADD_BIRDS : 
