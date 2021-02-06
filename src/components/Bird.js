@@ -93,7 +93,7 @@ class Bird extends React.Component {
                 
                 <Eye x={location.x - headSize/3 + randomLeftEyeVal} y={location.y - headSize/9} size={headSize/3} eyeWhiteColor={'#FFF'} irisColor={irisColor} pupilColor={'#000'} opacity={opacity}/>
                 <Eye x={location.x + headSize/3 - randomRightEyeVal} y={location.y - headSize/9} size={headSize/3} eyeWhiteColor={'#FFF'} irisColor={irisColor} pupilColor={'#000'} opacity={opacity}/>
-                <Beak x={location.x} y={location.y + headSize/4} width={headSize/9} height={headSize/3} opacity={opacity}/>
+                <Beak x={location.x} y={location.y + headSize/4} width={headSize/9} height={headSize/3} opacity={opacity} />
             </g>
             )
         } else {
@@ -106,7 +106,7 @@ class Bird extends React.Component {
                     
                     <Eye x={leftEyePos.x} y={leftEyePos.y} size={headSize/3} eyeWhiteColor={'#FFF'} irisColor={irisColor} pupilColor={'#000'} opacity={opacity}/>
                     <Eye x={rightEyePos.x} y={rightEyePos.y} size={headSize/3} eyeWhiteColor={'#FFF'} irisColor={irisColor} pupilColor={'#000'} opacity={opacity}/>
-                    <PlayBeak x={location.x} y={location.y - headSize * 0.35} width={headSize/6} height={headSize * 0.7} opacity={opacity}/>
+                    <PlayBeak x={location.x} y={location.y - headSize * 0.35} width={headSize/6} height={headSize * 0.7} opacity={opacity} beakRoll={eyeRollOffset.x}/>
                     </g>
                    
            
