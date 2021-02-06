@@ -121,6 +121,23 @@ export const updateClicked = (idx) => {
     }
 }
 
+export const updateHovered = (idx) => {
+    return {
+        type : BirdActionTypes.UPDATE_HOVERED,
+        payload: {
+            idx
+        } 
+
+    }
+}
+
+export const resetHovered = () => {
+    return {
+        type : BirdActionTypes.RESET_HOVERED, 
+
+    }
+}
+
 export const resetClicked = () => {
     return {
         type : BirdActionTypes.RESET_CLICKED, 
@@ -146,6 +163,7 @@ export const breatheAll = () => {
 }
 
 export const rollEyes = (id, offsetX, offsetY) => {
+    // console.error('ROLL EYES ACTION');
     return {
         type: BirdActionTypes.ROLL_EYES,
         payload: {

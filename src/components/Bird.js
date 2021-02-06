@@ -1,8 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
-    changeEyeColor,
+    updateHovered,
     updateClicked,
+    changeEyeColor,
 } from '../redux/birds.actions';
 import Head from './Head';
 import Eye from './Eye';
@@ -25,7 +26,7 @@ class Bird extends React.Component {
     }
 
     calculateLeftEyePos(location, headSize, randomLeftEyeVal, eyeRollOffset){
-        console.log(location, headSize, randomLeftEyeVal, eyeRollOffset.x);
+        //console.log(location, headSize, randomLeftEyeVal, eyeRollOffset.x);
         // const startX = location.x - headSize/3 + randomLeftEyeVal - headSize/8;
         // const startY = location.y - headSize + headSize/10;
 
@@ -34,7 +35,7 @@ class Bird extends React.Component {
         const rolledX = (location.x + Math.sin(eyeRollOffset.x/100 ) * (headSize * (0.9 - Math.abs(eyeRollOffset.y)/100)));
        
         const rolledY = (location.y + Math.cos(eyeRollOffset.x/100) * (headSize * (0.9 - Math.abs(eyeRollOffset.y)/100)));
-        console.log(eyeRollOffset, rolledX, rolledY);
+        //console.log(eyeRollOffset, rolledX, rolledY);
         return {
             x: rolledX,
             y: rolledY
@@ -43,7 +44,7 @@ class Bird extends React.Component {
     }
 
     calculateRightEyePos(location, headSize, randomRightEyeVal, eyeRollOffset){
-        console.log(eyeRollOffset);
+        //console.log(eyeRollOffset);
         // const startX = location.x + headSize/3 - randomRightEyeVal + headSize/8;
         // const startY = location.y - headSize + headSize/10;
 
@@ -57,7 +58,7 @@ class Bird extends React.Component {
 
     }
     dragStart(){
-        console.log('dragging');
+        //console.log('dragging');
     }
 
 
@@ -72,15 +73,22 @@ class Bird extends React.Component {
         // this.playSound(idx);
         updateClicked(idx);
         // startTicker();
-       
+    }
+
+    updateHovered(idx){
+        const { updateHovered, changeEyeColor } = this.props;
+        updateHovered(idx);
+        changeEyeColor(idx);
     }
 
     render(){
-        const {id, location, headSize, headColor1, headColor2, opacity, randomLeftEyeVal, randomRightEyeVal, irisColor, changeEyeColor, clicked, eyeRollOffset } = this.props;
-        console.log(randomLeftEyeVal);
+        const {id, location, headSize, headColor1, headColor2, opacity, randomLeftEyeVal, randomRightEyeVal, irisColor, clicked, eyeRollOffset, activeID, dragActive } = this.props;
+        if(clicked){
+            // console.log(clicked, id, activeID, eyeRollOffset, dragActive);
+        }
         if(!clicked){
             return (
-                <g className="bird" id={`bird${id}`} style={{position: 'absolute'}}  onMouseDown={() => this.updateClicked(id)} onMouseUp={() => this.updateClicked(id)} onMouseEnter={() => changeEyeColor(id)} onMouseLeave={() => changeEyeColor(id)}>
+                <g className="bird" id={`bird${id}`} style={{position: 'absolute'}}  onMouseDown={() => this.updateClicked(id)} onMouseUp={() => this.updateClicked(id)} onMouseEnter={() => this.updateHovered(id)} onMouseLeave={() => this.updateHovered(id)}>
                 <Head x={location.x} y={location.y} headSize={headSize} headColor1={headColor1} headColor2={headColor2} opacity={opacity}/> 
                 
                 <Eye x={location.x - headSize/3 + randomLeftEyeVal} y={location.y - headSize/9} size={headSize/3} eyeWhiteColor={'#FFF'} irisColor={irisColor} pupilColor={'#000'} opacity={opacity}/>
@@ -93,7 +101,7 @@ class Bird extends React.Component {
             const rightEyePos = this.calculateRightEyePos(location, headSize, randomLeftEyeVal, eyeRollOffset);
             return (
                 
-                    <g className="bird" id={`bird${id}`} style={{position: 'absolute'}}  onMouseDown={() => this.updateClicked(id)} onMouseUp={() => this.updateClicked(id)} onMouseEnter={() => changeEyeColor(id)} onMouseLeave={() => changeEyeColor(id)}>
+                    <g className="bird" id={`bird${id}`} style={{position: 'absolute'}}  onMouseDown={() => this.updateClicked(id)} onMouseUp={() => this.updateClicked(id)} onMouseEnter={() => this.updateHovered(id)} onMouseLeave={() => this.updateHovered(id)}>
                     <Head x={location.x} y={location.y} headSize={headSize} headColor1={headColor1} headColor2={headColor2} opacity={opacity}/> 
                     
                     <Eye x={leftEyePos.x} y={leftEyePos.y} size={headSize/3} eyeWhiteColor={'#FFF'} irisColor={irisColor} pupilColor={'#000'} opacity={opacity}/>
@@ -113,11 +121,14 @@ class Bird extends React.Component {
 const mapStateToProps = state => ({
     birds: state.birds,
     buffers: state.buffers,
+    activeID: state.activeID,
+    dragActive: state.dragActive,
 
 })
 
 
 const mapDispatchToProps = dispatch => ({
+    updateHovered : (id) => dispatch(updateHovered(id)),
     changeEyeColor : (id) => dispatch(changeEyeColor(id)),
     updateClicked : (idx) => dispatch(updateClicked(idx)),
 })

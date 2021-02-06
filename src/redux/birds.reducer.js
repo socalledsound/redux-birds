@@ -43,7 +43,7 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
     switch(action.type) {
 
         case BirdActionTypes.RESIZE_SCREEN :
-            console.log(state.currentIDX);
+           // console.log(state.currentIDX);
             // const resizedBirdsArray = Array.from({ length : state.currentIDX }, (_, i) => {
             //     if( state.currentIDX !== 0){
             //         // console.log(resized[i]);
@@ -62,7 +62,7 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
                 // birds: resizedBirdsArray,
             }
         case BirdActionTypes.UPDATE_BUFFERS :
-            console.log(action.payload);
+            //console.log(action.payload);
             return {
                 ...state,
                 buffers: action.payload.buffers
@@ -83,7 +83,7 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
                 }   
         case 'CHECK_NEIGHBORS' : 
                
-                            console.log(state.currentIDX, 'in neighbors reducer');
+                            //console.log(state.currentIDX, 'in neighbors reducer');
                         
                             const birdToCheck = [...state.birds].filter(bird => bird.id === state.currentIDX);
                             const thisBird = birdToCheck[0];
@@ -107,7 +107,7 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
                             } 
         case 'INCREMENT_IDX' : 
             const curr = state.currentIDX + 1
-            console.log(curr);
+            //console.log(curr);
             return {
                 ...state,
                 currentIDX: curr,
@@ -130,7 +130,7 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
             }      
 
         case BirdActionTypes.TICKER_STARTED :
-            console.log('ticker started')
+            //console.log('ticker started')
             return {
                 ...state,
                 tickerStarted : true,
@@ -186,6 +186,18 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
                 mouseRef: state.mousePos,
             }
 
+            case BirdActionTypes.UPDATE_HOVERED :
+            
+                const hoveredBirds = [...state.birds];
+                hoveredBirds[action.payload.idx].hovered = !hoveredBirds[action.payload.idx].hovered;   
+                // const newActiveID = clickedBirds[action.payload.idx].clicked ? action.payload.idx : null;
+                // const newDragActive = clickedBirds[action.payload.idx].clicked ? true : false;
+            
+                return {
+                    ...state,
+                    birds: hoveredBirds,
+                }
+
 
         case BirdActionTypes.UPDATE_MOUSE_POS :
             return {
@@ -223,7 +235,7 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
         case BirdActionTypes.ROLL_EYES :
             const eyeRollBirds = [...state.birds];
             eyeRollBirds[action.payload.id].eyeRollOffset = action.payload.offset;
-            console.log(action.payload.offset);
+            // console.error('ROLL EYES: ', action.payload.offset);
             return {
                 ...state,
                 birds: eyeRollBirds,

@@ -110,15 +110,17 @@ class App extends React.Component {
                     
                 }
 
+                // console.log(dragActive, activeID);
+                // console.log(birds[activeID]);
                 if(dragActive && activeID !== null){
-                        console.log(mousePos);
-                        console.log(mouseRef);
+                        // console.log(mousePos);
+                        // console.log(mouseRef);
                         const eyeOffsetX = mousePos.x - mouseRef.x;
                         const eyeOffsetY = mousePos.y - mouseRef.y;
                         
                         rollEyes(activeID, eyeOffsetX, eyeOffsetY);
                         let dist = getDistance(this.lastMousePos, mousePos);
-                        console.log(dist);
+                        //console.log(dist);
                         if(dist > GlobalSettings.scrubSensitivity){
                             this.lastMousePos = mousePos
                             this.playSound(activeID, mousePos.x-mouseRef.x, mousePos.y-mouseRef.y)
@@ -184,7 +186,7 @@ class App extends React.Component {
      }
 
      playSound(idx, eyeOffsetX, eyeOffsetY){
-        // const { buffers} = this.props;
+        const { birds } = this.props;
         const buf = eyeOffsetX < 0 ? this.buffers[idx%GlobalSettings.numSounds] : this.reversedBuffers[idx%GlobalSettings.numSounds];
         console.log(buf.duration);
 
@@ -207,7 +209,7 @@ class App extends React.Component {
         this.source.buffer = buf
         this.source.connect(audioContext.destination);
         const offset = scrubValue * buf.duration;
-        this.source.playbackRate.value = changedRate;
+        this.source.playbackRate.value = changedRate * 100/birds[idx].headSize;
         this.source.start(0, offset, 0.25);
         this.setState({isPlaying: true});
     }

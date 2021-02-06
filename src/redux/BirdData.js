@@ -42,6 +42,7 @@ class BirdData {
         this.front  = false;
         this.growing  = false;
         this.clicked = false;
+        this.hovered = false;
         this.soundPlaying = false;
 
 
