@@ -4,7 +4,8 @@ import  GlobalSettings from '../GlobalSettings';
 class BirdData {
     constructor(baseBirdData, svgWidth, svgHeight){
         const {id, randomXScaler, randomYScaler, randomHeadSizeScaler, color1, color2, color3} = baseBirdData;
-        console.log(randomHeadSizeScaler, svgHeight, GlobalSettings.minHeadSize);
+        // console.log(color3);
+        // console.log(randomHeadSizeScaler, svgHeight, GlobalSettings.minHeadSize);
         this.id = id;
         // this.howl = GlobalSettings.sounds[id % GlobalSettings.numSounds];
         this.baseHeadSize = randomHeadSizeScaler * svgHeight/10 + GlobalSettings.minHeadSize;
@@ -23,6 +24,7 @@ class BirdData {
         this.startTween = mySimpleTween(this.startHeadSize, this.baseHeadSize, GlobalSettings.startGrowResolution);
         this.headColor1 = color1;
         this.headColor2 = color2;
+        // this.mainIrisColor = `#${color3}`;
         this.mainIrisColor = color3;
         this.redIrisColor = '#FF0000';
         this.irisColor = this.mainIrisColor;
@@ -45,7 +47,7 @@ class BirdData {
         this.hovered = false;
         this.soundPlaying = false;
 
-
+        // console.log(this.irisColor);
 
     }
 
