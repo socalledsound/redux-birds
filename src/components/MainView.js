@@ -6,7 +6,7 @@ const mainViewStyle = {
     position: "absolute",
     top: "0px",
     left: "0px",
-    background: "#8aeb96"
+    
 }
 
 
