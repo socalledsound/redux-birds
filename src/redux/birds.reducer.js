@@ -1,7 +1,7 @@
 import GlobalSettings from '../GlobalSettings';
 import { BirdActionTypes } from './birds.actions.types';
 import BirdData from './BirdData';
-import { checkRandomEyeMove } from '../utils';
+import { checkRandomEyeMove, checkNeighbors } from '../utils';
 import { generatePlaybackProbability, getPlaybackValues } from '../PLAYBACK_ROUTINE';
 
 
@@ -130,6 +130,55 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
                 ...state,
                 playNow : false,
             }   
+
+            case BirdActionTypes.MOVE_BIRDS : 
+            
+            const movedBirds = [...state.birds].map(bird => {
+                bird.location.x += bird.velocity.x;
+                bird.location.y += bird.velocity.y;
+                bird.velocity.x *= bird.friction;
+                bird.velocity.y *= bird.friction;
+                return bird
+            });
+            return {
+                ...state,
+                birds: movedBirds,
+            }
+
+            case BirdActionTypes.CHECK_EDGES : 
+                const checkEdgeBirds = [...state.birds].map( bird => {
+                    const offset = (bird.headSize * 1.2);
+                    if(bird.location.x + offset > state.svgWidth || bird.location.x < 0 + offset){
+                        
+                        bird.velocity.x *= -1;
+                        bird.headSize *= 0.5;
+                        bird.location.x += bird.velocity.x * 5.0;
+                        bird.triggerSound= true;
+                    }
+                    if(bird.location.y + offset > state.svgHeight || bird.location.y < 0 + offset){
+                        
+                        bird.velocity.y *= -1
+                        bird.location.y += bird.velocity.y * 5.0;
+                        bird.headSize *= 0.5;
+                        bird.triggerSound = true;
+                    }
+                    return bird
+                })
+            
+            return {
+                ...state,
+                birds: checkEdgeBirds,
+            }
+
+        case BirdActionTypes.RESET_TRIGGER_SOUND :
+            
+            const resetTriggeredBird = [...state.birds];
+            resetTriggeredBird[action.payload.idx].triggerSound = false;
+            return {
+                ...state,
+                birds: resetTriggeredBird,
+            }    
+
         case BirdActionTypes.PLAY_BIRD : 
             
             const playBackBirds = [...state.birds];
@@ -177,29 +226,22 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
 
             }   
 
-        case 'CHECK_NEIGHBORS' : 
+        case 'CHECK_NEIGHBOR_BIRDS' : 
                
-                            //console.log(state.currentIDX, 'in neighbors reducer');
-                        
-                            const birdToCheck = [...state.birds].filter(bird => bird.id === state.currentIDX);
-                            const thisBird = birdToCheck[0];
-                            // console.log(thisBird);
-                            const otherBirds = [...state.birds].filter(bird => bird.id !== state.currentIDX);
-                            //console.log(otherBirds);
-                            otherBirds.forEach(otherBird => {
-                                    //console.log(otherBird);
-                                    const dx = otherBird.location.x - thisBird.location.x;
-                                    const dy = otherBird.location.y - thisBird.location.y;
-                                    const dist = Math.sqrt(dx * dx + dy * dy);
-                                    if(dist < otherBird.headSize + thisBird.headSize + 10){
-                                        //console.log('overlapping');
-                                        // thisBird.fill = GlobalSettings.warningColor;
-                                        thisBird.overlap = true;
-                                    }
-                            })  
+            const checkedNeighbors = [...state.birds].map( bird => {
+
+                if(checkNeighbors(bird, state.birds, 10)){
+                    bird.velocity.x *= -1;
+                    bird.velocity.y *= -1;
+                    bird.headSize *= 0.5;
+                    bird.location.x += bird.velocity.x * 5.0;
+                    bird.location.y += bird.velocity.y * 5.0;
+                    bird.triggerSound= true;
+                }
+            })
                             return {
                                 ...state,
-                                circles: otherBirds.concat(birdToCheck),
+                                circles: checkedNeighbors,
                             } 
         case 'INCREMENT_IDX' : 
             const curr = state.currentIDX + 1

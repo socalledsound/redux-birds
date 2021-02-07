@@ -53,7 +53,7 @@ export const getColorGradient = (color1, color2) => {
 
 
 
-export const checkNeighbors = (thisThing, others) => {
+export const checkNeighbors = (thisThing, others, offset = 0) => {
   // console.log(thisThing);
    const othersToCheck = others.filter(item => item.id !== thisThing.id);
    const checks = othersToCheck.map(other => {
@@ -61,7 +61,7 @@ export const checkNeighbors = (thisThing, others) => {
                const dx = other.location.x - thisThing.location.x;
                const dy = other.location.y - thisThing.location.y;
                const dist = Math.sqrt(dx * dx + dy * dy);
-               if(dist < other.baseHeadSize + thisThing.baseHeadSize + 50){
+               if(dist < other.headSize + thisThing.headSize + offset){
                 //  console.log('found');
                    return true
                } else {

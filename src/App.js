@@ -7,7 +7,7 @@ import {
     checkForOverlaps,
     addBaseBird,
     addBird,
-    // checkNeighbors,
+    checkNeighborBirds,
     incrementIDX,
     removeBird,
     fixBird,
@@ -27,6 +27,9 @@ import {
     playNotNow,
     playBird,
     resetBirdWithTimeout,
+    moveBirds,
+    checkEdges,
+    resetTriggerSound,
 } from './redux/birds.actions';
 
 import MainView from './components/MainView';
@@ -128,7 +131,9 @@ class App extends React.Component {
         const ticker = () => {
             const { timeTick, dragActive, rollEyes, moveEyes, activeID, mousePos, mouseRef,
                     runRoutine, startRoutine, routineStarted, routinePlaying, 
-                    toggleRoutinePlaying, playNow } = this.props;
+                    toggleRoutinePlaying, playNow, 
+                    birds, checkNeighborBirds,
+                    moveBirds, checkEdges, resetTriggerSound } = this.props;
             // const { hatchCount } = this.state
            //console.log(tickerStarted, timeTick, 'in start ticker')
             
@@ -152,6 +157,18 @@ class App extends React.Component {
                 if(timeTick > 100){
                     breatheAll();
                     moveEyes();  
+                    moveBirds();
+                    checkEdges();
+                    birds.forEach(bird => checkNeighborBirds(bird.id));
+                    
+
+                    birds.forEach( bird => {
+                        if(bird.triggerSound){
+                            this.playBounceSound(bird);
+                            rollEyes(bird.id, bird.velocity.x * 100, bird.velocity.y * 100);
+                            resetTriggerSound(bird.id);
+                        }
+                    })
                 }
 
                 if(routineStarted){
@@ -163,7 +180,7 @@ class App extends React.Component {
 
                         if(playNow){
                             toggleRoutinePlaying();
-                            this.playRoutine();
+                            // this.playRoutine();
                             
                         }
                        
@@ -220,7 +237,7 @@ class App extends React.Component {
             
             const basebird = makeBaseBird(idx);
             const bird = makeBird(basebird, width, height);
-            if(!checkNeighbors(bird, this.buildBirdsArray)){
+            if(!checkNeighbors(bird, this.buildBirdsArray, 50)){
                 this.buildBirdsArray.push(bird);
                 this.baseBirdsArray.push(basebird);
                 idx++;
@@ -351,18 +368,25 @@ class App extends React.Component {
         resetBird(pbValues.birdNum, pbValues.duration * 2000)
         setTimeout(toggleRoutinePlaying, pbValues.duration * 10000);
     }
-
+    
+    playBounceSound = (bird) => {
+        console.log(bird);
+        const buf = bird.velocity.x < 0 ? this.buffers[bird.id % GlobalSettings.numSounds] : this.reversedBuffers[bird.id % GlobalSettings.numSounds];
+        console.log(buf.duration);
+        const pbSource = audioContext.createBufferSource();
+        const gainNode = audioContext.createGain();
+        pbSource.buffer = buf;
+        gainNode.gain.value = 0.5;
+        gainNode.connect(audioContext.destination);
+        pbSource.connect(gainNode);
+        //const offset = pbValues.offset * buf.duration;
+        pbSource.playbackRate.value = Math.abs(bird.velocity.x)/5.0 + 0.5;
+        pbSource.start(0, 0.0, buf.duration);
+    }
 
     playRoutineSound(pbValues){
         const { birds } = this.props;
         const buf = pbValues.dir < 0 ? this.buffers[pbValues.bufnum] : this.reversedBuffers[pbValues.bufnum];
-        console.log(buf.duration);
-
-        //const scrubValue = absOffset > (buf.duration - 0.1) ? (buf.duration - 0.1) : absOffset;
-        // if(this.state.isPlaying){
-        //     this.source.stop(0);
-        //     this.setState({isPlaying: false});
-        // }
         
        const pbSource = audioContext.createBufferSource();
         const gainNode = audioContext.createGain();
@@ -441,7 +465,7 @@ const mapDispatchToProps = dispatch => ({
     checkForOverlaps : () => dispatch(checkForOverlaps()),
     addBaseBird : (basebird) => dispatch(addBaseBird(basebird)),
     addBird : (bird) => dispatch(addBird(bird)),
-    // checkNeighbors : () => dispatch(checkNeighbors()),
+   
     incrementIDX : () => dispatch(incrementIDX()),
     removeBird : (idx) => dispatch(removeBird(idx)),
     fixBird : () => dispatch(fixBird()),
@@ -458,6 +482,11 @@ const mapDispatchToProps = dispatch => ({
     playNotNow : () => dispatch(playNotNow()),
     playBird : (idx) => dispatch(playBird(idx)),
     resetBird : (idx, wait) => resetBirdWithTimeout(dispatch, idx, wait),
+    moveBirds : () => dispatch(moveBirds()),
+    checkEdges : () => dispatch(checkEdges()),
+     checkNeighborBirds : (idx) => dispatch(checkNeighborBirds(idx)),
+    resetTriggerSound : (idx) => dispatch(resetTriggerSound(idx)),
+    
 })
 
 

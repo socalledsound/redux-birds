@@ -47,6 +47,27 @@ export const hatchBirds = (idx) => {
     }
 }
 
+export const moveBirds = () => {
+    return {
+        type: BirdActionTypes.MOVE_BIRDS,
+    }
+}
+
+export const checkEdges = () => {
+    return {
+        type : BirdActionTypes.CHECK_EDGES,
+    }
+}
+
+export const resetTriggerSound = (idx) => {
+    return {
+        type: BirdActionTypes.RESET_TRIGGER_SOUND,
+        payload : {
+            idx
+        }
+    }
+}
+
 export const startRoutine = ( ) => {
     return {
         type: BirdActionTypes.START_ROUTINE,
@@ -129,9 +150,12 @@ export const resetBirdWithTimeout = (dispatch, idx, wait) => {
     setTimeout(() => {dispatch(resetBird(idx))}, wait);
 }
 
-export const checkNeighbors = () => {
+export const checkNeighborBirds = (idx) => {
     return {
-        type: BirdActionTypes.CHECK_NEIGHBORS,
+        type: BirdActionTypes.CHECK_NEIGHBOR_BIRDS,
+        payload: {
+            idx
+        }
     }
 }
 

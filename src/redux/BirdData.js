@@ -17,6 +17,9 @@ class BirdData {
         this.startLocation = { x: (this.clickedHeadSize * 2.0) + (randomXScaler * (svgWidth - this.clickedHeadSize * 4.0)), y: (this.clickedHeadSize * 2.0) + (randomYScaler * (svgHeight - this.clickedHeadSize * 4.0))  };
         this.location = this.startLocation;
         this.currentScreenCenter = {x: svgWidth/2, y: svgHeight/2};
+        this.velocity = { x: Math.random() * 5.0, y: Math.random() * 5.0 };
+        this.acceleration = {x: 0, y: 0};
+        this.friction = 0.98;
         this.toCenter = tweenToDestination(this.location, this.currentScreenCenter, GlobalSettings.toCenterResolution);
         this.toEdge = tweenToDestination(this.currentScreenCenter, GlobalSettings.edge, GlobalSettings.toCenterResolution);
         this.toBig = mySimpleTween(this.clickedHeadSize, GlobalSettings.maxHeadSize, GlobalSettings.growResolution);
@@ -47,6 +50,7 @@ class BirdData {
         this.beingPlayed = false;
         this.hovered = false;
         this.soundPlaying = false;
+        this.triggerSound = false;
 
         // console.log(this.irisColor);
 
