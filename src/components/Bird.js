@@ -82,12 +82,17 @@ class Bird extends React.Component {
     }
 
     render(){
-        const {id, location, headSize, headColor1, headColor2, opacity, randomLeftEyeVal, randomRightEyeVal, irisColor, clicked, eyeRollOffset } = this.props;
+        const {id, location, headSize, headColor1, headColor2, opacity, randomLeftEyeVal, randomRightEyeVal, 
+            irisColor, clicked, beingPlayed, eyeRollOffset } = this.props;
         // console.log(irisColor);
         if(clicked){
             // console.log(clicked, id, activeID, eyeRollOffset, dragActive);
         }
-        if(!clicked){
+        // console.log(beingPlayed);
+        if(beingPlayed){
+            //console.log(beingPlayed, eyeRollOffset);
+        }
+        if(!clicked && !beingPlayed){
             return (
                 <g className="bird" id={`bird${id}`} style={{position: 'absolute'}}  onMouseDown={() => this.updateClicked(id)} onMouseUp={() => this.updateClicked(id)} onMouseEnter={() => this.updateHovered(id)} onMouseLeave={() => this.updateHovered(id)}>
                 <Head x={location.x} y={location.y} headSize={headSize} headColor1={headColor1} headColor2={headColor2} opacity={opacity}/> 

@@ -47,6 +47,33 @@ export const hatchBirds = (idx) => {
     }
 }
 
+export const startRoutine = ( ) => {
+    return {
+        type: BirdActionTypes.START_ROUTINE,
+    }
+}
+
+export const toggleRoutinePlaying = ( ) => {
+    return {
+        type: BirdActionTypes.TOGGLE_ROUTINE_PLAYING,
+    }
+}
+
+export const playNotNow = ( ) => {
+    return {
+        type: BirdActionTypes.PLAY_NOT_NOW,
+    }
+}
+
+
+export const runRoutine = ( ) => {
+    return {
+        type: BirdActionTypes.RUN_ROUTINE,
+    }
+}
+
+
+
 export const checkForOverlaps = () => {
     return {
         type: BirdActionTypes.CHECK_FOR_OVERLAPS,
@@ -80,6 +107,27 @@ export const addBird = (bird) => {
     }
 }
 
+export const playBird = (idx, wait) => {
+    return {
+        type : BirdActionTypes.PLAY_BIRD,
+        payload : {
+            idx,
+        }
+    }
+}
+
+export const resetBird = (idx) => {
+    return {
+        type : BirdActionTypes.RESET_BIRD,
+        payload : {
+            idx,
+        }
+    }
+}
+
+export const resetBirdWithTimeout = (dispatch, idx, wait) => {
+    setTimeout(() => {dispatch(resetBird(idx))}, wait);
+}
 
 export const checkNeighbors = () => {
     return {

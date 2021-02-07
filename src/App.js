@@ -21,12 +21,19 @@ import {
     addBirds,
     addBaseBirds,
     hatchBirds,
+    startRoutine,
+    runRoutine,
+    toggleRoutinePlaying,
+    playNotNow,
+    playBird,
+    resetBirdWithTimeout,
 } from './redux/birds.actions';
 
 import MainView from './components/MainView';
 import GlobalSettings from './GlobalSettings';
 import { makeBaseBird, makeBird, getDistance, checkNeighbors } from './utils';
 import { audioContext, soundFilesArray, initBuffer, reverseBuffers } from './sound-utils';
+// import { getPlaybackValues } from './PLAYBACK_ROUTINE';
 
 
 
@@ -119,7 +126,9 @@ class App extends React.Component {
         
 
         const ticker = () => {
-            const { timeTick, dragActive, rollEyes, moveEyes, activeID, mousePos, mouseRef } = this.props;
+            const { timeTick, dragActive, rollEyes, moveEyes, activeID, mousePos, mouseRef,
+                    runRoutine, startRoutine, routineStarted, routinePlaying, 
+                    toggleRoutinePlaying, playNow } = this.props;
             // const { hatchCount } = this.state
            //console.log(tickerStarted, timeTick, 'in start ticker')
             
@@ -142,8 +151,28 @@ class App extends React.Component {
 
                 if(timeTick > 100){
                     breatheAll();
-                    moveEyes();
+                    moveEyes();  
+                }
+
+                if(routineStarted){
+                    // console.log(playNow, routinePlaying);
+                        if(!routinePlaying && !playNow){
+                            runRoutine();
+                            // console.log('runRoutine called');
+                        }
+
+                        if(playNow){
+                            toggleRoutinePlaying();
+                            this.playRoutine();
+                            
+                        }
+                       
+
+                        
+                        
+                        
                     
+
                 }
 
                 // console.log(dragActive, activeID);
@@ -159,11 +188,15 @@ class App extends React.Component {
                         //console.log(dist);
                         if(dist > GlobalSettings.scrubSensitivity){
                             this.lastMousePos = mousePos
-                            this.playSound(activeID, mousePos.x-mouseRef.x, mousePos.y-mouseRef.y)
+                            this.playSound(activeID, mousePos.x-mouseRef.x, mousePos.y-mouseRef.y);
                         }
                         
+                        if(!routineStarted){
+                            startRoutine();
+                        }
 
                 }
+                
                
 
                 this.requestAnimation = window.requestAnimationFrame(ticker);
@@ -290,10 +323,6 @@ class App extends React.Component {
        // const 
 
         //const scrubValue = absOffset > (buf.duration - 0.1) ? (buf.duration - 0.1) : absOffset;
-        
-
-        
-        
         if(this.state.isPlaying){
             this.source.stop(0);
             this.setState({isPlaying: false});
@@ -310,7 +339,42 @@ class App extends React.Component {
     }
 
 
+    playRoutine = () => {
+        const { toggleRoutinePlaying, playBird, resetBird, rollEyes, playNotNow, playBackIndex, playbackValues} = this.props;
+        
+        playNotNow();
+        const pbValues = playbackValues[playBackIndex];
+        console.log(pbValues, playbackValues, playBackIndex);
+        this.playRoutineSound(pbValues);
+        playBird(pbValues.birdNum);
+        rollEyes(pbValues.birdNum, pbValues.offset * -1 * pbValues.dir * 100, pbValues.rate * 100);
+        resetBird(pbValues.birdNum, pbValues.duration * 2000)
+        setTimeout(toggleRoutinePlaying, pbValues.duration * 10000);
+    }
 
+
+    playRoutineSound(pbValues){
+        const { birds } = this.props;
+        const buf = pbValues.dir < 0 ? this.buffers[pbValues.bufnum] : this.reversedBuffers[pbValues.bufnum];
+        console.log(buf.duration);
+
+        //const scrubValue = absOffset > (buf.duration - 0.1) ? (buf.duration - 0.1) : absOffset;
+        // if(this.state.isPlaying){
+        //     this.source.stop(0);
+        //     this.setState({isPlaying: false});
+        // }
+        
+       const pbSource = audioContext.createBufferSource();
+        const gainNode = audioContext.createGain();
+        pbSource.buffer = buf;
+        gainNode.gain.value = pbValues.vol;
+        gainNode.connect(audioContext.destination);
+        pbSource.connect(gainNode);
+        const offset = pbValues.offset * buf.duration;
+        pbSource.playbackRate.value = pbValues.rate/(birds[pbValues.birdNum].headSize/50.0);
+        pbSource.start(0, offset, pbValues.playLength);
+        // this.setState({isPlaying: true});
+    }
 
     updateMousePos = (x, y) => {
         const { updateMousePos } = this.props;
@@ -343,7 +407,7 @@ class App extends React.Component {
             </React.Fragment>
         )
     }
-   
+
 
 
 }
@@ -355,6 +419,11 @@ const mapStateToProps = state => ({
     birds: state.birds,
     tickerStarted: state.tickerStarted, 
     timeTick: state.timeTick,
+    routineStarted : state.routineStarted,
+    routinePlaying : state.routinePlaying,
+    playNow : state.playNow,
+    playbackValues : state.playbackValues,
+    playBackIndex : state.playBackIndex,
     currentIDX : state.currentIDX,
     dragActive : state.dragActive,
     activeID : state.activeID,
@@ -382,6 +451,12 @@ const mapDispatchToProps = dispatch => ({
     addBirds : (arr) => dispatch(addBirds(arr)),
     addBaseBirds : (arr) => dispatch(addBaseBirds(arr)),
     hatchBirds : (idx) => dispatch(hatchBirds(idx)),
+    startRoutine : () => dispatch(startRoutine()),
+    runRoutine : () => dispatch(runRoutine()),
+    toggleRoutinePlaying : () => dispatch(toggleRoutinePlaying()),
+    playNotNow : () => dispatch(playNotNow()),
+    playBird : (idx) => dispatch(playBird(idx)),
+    resetBird : (idx, wait) => resetBirdWithTimeout(dispatch, idx, wait),
 })
 
 

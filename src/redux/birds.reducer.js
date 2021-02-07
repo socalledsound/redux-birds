@@ -1,9 +1,9 @@
 import GlobalSettings from '../GlobalSettings';
 import { BirdActionTypes } from './birds.actions.types';
 import BirdData from './BirdData';
-// import BirdBaseValues from './BirdBaseValues';
 import { checkRandomEyeMove } from '../utils';
-// import Bird from '../components/Bird';
+import { generatePlaybackProbability, getPlaybackValues } from '../PLAYBACK_ROUTINE';
+
 
 
 // const initBirds = Array.from({ length : 3 }, (_, index) => {
@@ -23,16 +23,22 @@ import { checkRandomEyeMove } from '../utils';
 const INITIAL_STATE = {
     svgWidth: GlobalSettings.defaultWidth,
     svgHeight: GlobalSettings.defaultHeight,
-    initResize: false,
-    currentIDX: 0,
-    timeTick: 0,
-    mousePos: {x: 0, y: 0},
-    tickerStarted: false,
-    dragActive: false,
-    activeID: null,
     buffers: [],
     birdBaseValues: [],
     birds: [],
+    timeTick: 0,
+    currentIDX: 0,
+    mousePos: {x: 0, y: 0},
+    playbackValues: [{bufnum: 0, duration: 0.0, rate: 0.0, dir: 1, vol: 0.0 }],
+    playBackIndex: 0,
+    activeID: null,
+    initResize: false,
+    tickerStarted: false,
+    dragActive: false,
+    routineStarted: false,
+    routinePlaying : false,
+    playNow: false,
+    
 }
 
 
@@ -108,6 +114,69 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
                     ...state,
                     birds: addedBird
                 }   
+        case BirdActionTypes.START_ROUTINE : 
+            return {
+                ...state,
+                routineStarted : true
+            }   
+
+            case BirdActionTypes.TOGGLE_ROUTINE_PLAYING : 
+            return {
+                ...state,
+                routinePlaying : !state.routinePlaying
+            }    
+            case BirdActionTypes.PLAY_NOT_NOW : 
+            return {
+                ...state,
+                playNow : false,
+            }   
+        case BirdActionTypes.PLAY_BIRD : 
+            
+            const playBackBirds = [...state.birds];
+
+            playBackBirds[action.payload.idx].beingPlayed = true; 
+            playBackBirds[action.payload.idx].irisColor = playBackBirds[action.payload.idx].redIrisColor; 
+            // console.log(playBackBirds[action.payload.idx].beingPlayed);
+            return {
+                ...state,
+                birds: playBackBirds,
+            }
+            case BirdActionTypes.RESET_BIRD : 
+            console.log(action.payload.idx);
+            const resetPlayBirds = [...state.birds];
+
+            resetPlayBirds[action.payload.idx].beingPlayed = false; 
+            resetPlayBirds[action.payload.idx].irisColor = resetPlayBirds[action.payload.idx].mainIrisColor; 
+            // console.log(playBackBirds[action.payload.idx].beingPlayed);
+            return {
+                ...state,
+                birds: resetPlayBirds,
+            }            
+            
+        case BirdActionTypes.RUN_ROUTINE : 
+            const playNow = generatePlaybackProbability();
+            let newPlayBackIndex = state.playBackIndex;
+            let newPlayBackValues = [...state.playbackValues];
+            
+            if(playNow && !state.routinePlaying){
+                const birdNum = Math.floor(Math.random() * state.birds.length);
+                const bufnum = birdNum % state.buffers.length;
+                const choice = state.buffers[bufnum];
+                const generatedPlayBackValues = getPlaybackValues(bufnum, birdNum, choice);
+                newPlayBackIndex += 1;
+                newPlayBackValues.push(generatedPlayBackValues);
+
+            }
+ 
+
+            return {
+                ...state,
+                playNow: playNow,
+                playBackIndex: newPlayBackIndex,
+                playbackValues: newPlayBackValues,
+
+            }   
+
         case 'CHECK_NEIGHBORS' : 
                
                             //console.log(state.currentIDX, 'in neighbors reducer');

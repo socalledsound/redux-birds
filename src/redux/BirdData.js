@@ -14,7 +14,7 @@ class BirdData {
         this.headSize = this.baseHeadSize;
         this.smallHeadSize = GlobalSettings.minHeadSize;
         this.largeHeadSize = GlobalSettings.minHeadSize * 6;
-        this.startLocation = { x: this.clickedHeadSize + (randomXScaler * (svgWidth - this.clickedHeadSize * 2.0)), y: this.clickedHeadSize + (randomYScaler * (svgHeight - this.clickedHeadSize * 2.0))  };
+        this.startLocation = { x: (this.clickedHeadSize * 2.0) + (randomXScaler * (svgWidth - this.clickedHeadSize * 4.0)), y: (this.clickedHeadSize * 2.0) + (randomYScaler * (svgHeight - this.clickedHeadSize * 4.0))  };
         this.location = this.startLocation;
         this.currentScreenCenter = {x: svgWidth/2, y: svgHeight/2};
         this.toCenter = tweenToDestination(this.location, this.currentScreenCenter, GlobalSettings.toCenterResolution);
@@ -44,6 +44,7 @@ class BirdData {
         this.front  = false;
         this.growing  = false;
         this.clicked = false;
+        this.beingPlayed = false;
         this.hovered = false;
         this.soundPlaying = false;
 
