@@ -8,7 +8,7 @@ class BirdData {
         // console.log(randomHeadSizeScaler, svgHeight, GlobalSettings.minHeadSize);
         this.id = id;
         // this.howl = GlobalSettings.sounds[id % GlobalSettings.numSounds];
-        this.baseHeadSize = randomHeadSizeScaler * svgHeight/10 + GlobalSettings.minHeadSize;
+        this.baseHeadSize = randomHeadSizeScaler * svgHeight/15 + svgWidth/25;
         this.clickedHeadSize = this.baseHeadSize + 10;
         this.startHeadSize = 5;
         this.headSize = this.baseHeadSize;

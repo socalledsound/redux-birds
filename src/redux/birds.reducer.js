@@ -136,16 +136,16 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
             
             const offscreenBirds = [...state.birds].map(bird => {
                 if(bird.location.x < 0){
-                    bird.location.x = 10;
+                    bird.location.x = 50;
                 }
                 if(bird.location.x > state.svgWidth){
-                    bird.location.x = state.svgWidth -10;
+                    bird.location.x = state.svgWidth -50;
                 }
                 if(bird.location.y < 0){
-                    bird.location.y = 10;
+                    bird.location.y = 50;
                 }
                 if(bird.location.y > state.svgHeight){
-                    bird.location.y = state.svgHeight - 10;
+                    bird.location.y = state.svgHeight - 50;
                 }
                     
                 return bird
