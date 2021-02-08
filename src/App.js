@@ -18,6 +18,7 @@ import {
     rollEyes,
     moveEyes,
     resetClicked,
+    resetGrowing,
     addBirds,
     addBaseBirds,
     hatchBirds,
@@ -30,6 +31,14 @@ import {
     moveBirds,
     checkEdges,
     resetTriggerSound,
+    growBird,
+    flutterBirds,
+    resetFluttering,
+    decrementFlutterCount,
+    changeEyeColor,
+    triggerBouncing,
+    decrementBounceCount, 
+    resetBouncing,
 } from './redux/birds.actions';
 
 import MainView from './components/MainView';
@@ -130,10 +139,11 @@ class App extends React.Component {
 
         const ticker = () => {
             const { timeTick, dragActive, rollEyes, moveEyes, activeID, mousePos, mouseRef,
-                    runRoutine, startRoutine, routineStarted, routinePlaying, 
-                    toggleRoutinePlaying, playNow, 
-                    birds, checkNeighborBirds,
-                    moveBirds, checkEdges, resetTriggerSound } = this.props;
+                    runRoutine, startRoutine, routineStarted, routinePlaying, changeEyeColor,
+                    toggleRoutinePlaying, playNow, flutterBirds, fluttering, flutterCount,
+                    birds, checkNeighborBirds,growBird,resetFluttering, decrementFlutterCount,
+                    moveBirds, checkEdges, resetTriggerSound, triggerBouncing,
+                    decrementBounceCount, resetBouncing } = this.props;
             // const { hatchCount } = this.state
            //console.log(tickerStarted, timeTick, 'in start ticker')
             
@@ -159,14 +169,42 @@ class App extends React.Component {
                     moveEyes();  
                     moveBirds();
                     checkEdges();
-                    birds.forEach(bird => checkNeighborBirds(bird.id));
-                    
+                    const flutter = Math.random() > 0.9 ? true : false;
+                    if(flutter && !fluttering){
+                        flutterBirds();
+
+                    }
+                    if(fluttering && flutterCount > 0){
+                        decrementFlutterCount();
+                    }
+                    if(fluttering && flutterCount === 0){
+                        resetFluttering();
+                    }
+
+
+
+
+                    // birds.forEach(bird => );
+
 
                     birds.forEach( bird => {
+                        checkNeighborBirds(bird.id)
                         if(bird.triggerSound){
                             this.playBounceSound(bird);
+                            triggerBouncing(bird.id);
+                            changeEyeColor(bird.id);
                             rollEyes(bird.id, bird.velocity.x * 100, bird.velocity.y * 100);
                             resetTriggerSound(bird.id);
+                        }
+
+                        if(bird.bouncing && bird.bounceCount > 0){
+                            decrementBounceCount(bird.id);
+                            rollEyes(bird.id, bird.velocity.x * 100, bird.velocity.y * 100);
+                        }
+
+                        if(bird.bouncing && bird.bounceCount === 0){
+                            resetBouncing(bird.id);
+                            changeEyeColor(bird.id)
                         }
                     })
                 }
@@ -199,7 +237,7 @@ class App extends React.Component {
                         // console.log(mouseRef);
                         const eyeOffsetX = mousePos.x - mouseRef.x;
                         const eyeOffsetY = mousePos.y - mouseRef.y;
-                        
+                        growBird(activeID);
                         rollEyes(activeID, eyeOffsetX, eyeOffsetY);
                         let dist = getDistance(this.lastMousePos, mousePos);
                         //console.log(dist);
@@ -346,11 +384,12 @@ class App extends React.Component {
         }
         
        this.source = audioContext.createBufferSource();
+       console.log('pbrate', changedRate * 300/birds[idx].headSize);
         // if( source ) { source.stop(0); }
         this.source.buffer = buf
         this.source.connect(audioContext.destination);
         const offset = scrubValue * buf.duration;
-        this.source.playbackRate.value = changedRate * 100/birds[idx].headSize;
+        this.source.playbackRate.value = changedRate * 300/birds[idx].headSize;
         this.source.start(0, offset, 0.25);
         this.setState({isPlaying: true});
     }
@@ -409,6 +448,7 @@ class App extends React.Component {
     resetClicked = (x,y) => {
         const { resetClicked } = this.props
         resetClicked();
+        // resetGrowing();
         this.setState({isPlaying: false});
     }
 
@@ -427,6 +467,7 @@ class App extends React.Component {
                 birds={birds}
                 updateMousePos={this.updateMousePos}
                 resetClicked={this.resetClicked}
+                
                 />
                 
             </React.Fragment>
@@ -454,6 +495,8 @@ const mapStateToProps = state => ({
     activeID : state.activeID,
     mousePos: state.mousePos,
     mouseRef: state.mouseRef,
+    fluttering: state.fluttering,
+    flutterCount : state.flutterCount,
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -472,7 +515,9 @@ const mapDispatchToProps = dispatch => ({
     updateMousePos : (x, y) => dispatch(updateMousePos(x,y)),
     rollEyes : (id, offsetX, offsetY) => dispatch(rollEyes(id, offsetX, offsetY)),
     moveEyes : () => dispatch(moveEyes()),
+    
     resetClicked : () => dispatch(resetClicked()),
+    resetGrowing : () => dispatch(resetGrowing()),
     addBirds : (arr) => dispatch(addBirds(arr)),
     addBaseBirds : (arr) => dispatch(addBaseBirds(arr)),
     hatchBirds : (idx) => dispatch(hatchBirds(idx)),
@@ -483,10 +528,17 @@ const mapDispatchToProps = dispatch => ({
     playBird : (idx) => dispatch(playBird(idx)),
     resetBird : (idx, wait) => resetBirdWithTimeout(dispatch, idx, wait),
     moveBirds : () => dispatch(moveBirds()),
+    flutterBirds : () => dispatch(flutterBirds()),
     checkEdges : () => dispatch(checkEdges()),
-     checkNeighborBirds : (idx) => dispatch(checkNeighborBirds(idx)),
+    checkNeighborBirds : (idx) => dispatch(checkNeighborBirds(idx)),
     resetTriggerSound : (idx) => dispatch(resetTriggerSound(idx)),
-    
+    growBird : (idx) => dispatch(growBird(idx)),
+    resetFluttering : () => dispatch(resetFluttering()),
+    decrementFlutterCount : () => dispatch(decrementFlutterCount()),
+    changeEyeColor : (id) => dispatch(changeEyeColor(id)),
+    triggerBouncing : (id) => dispatch(triggerBouncing(id)),
+    decrementBounceCount : (id) => dispatch(decrementBounceCount(id)),
+    resetBouncing : (id) => dispatch(resetBouncing(id)),
 })
 
 

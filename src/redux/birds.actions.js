@@ -53,6 +53,51 @@ export const moveBirds = () => {
     }
 }
 
+export const resetFluttering = () => {
+    return {
+        type: BirdActionTypes.RESET_FLUTTERING,
+    }
+}
+
+export const triggerBouncing = (idx) => {
+    return {
+        type: BirdActionTypes.TRIGGER_BOUNCING,
+        payload: {
+            idx
+        }
+    }
+}
+
+export const resetBouncing = (idx) => {
+    return {
+        type: BirdActionTypes.RESET_BOUNCING,
+        payload: {
+            idx
+        }
+    }
+}
+
+export const decrementBounceCount = (idx) => {
+    return {
+        type: BirdActionTypes.DECREMENT_BOUNCE_COUNT,
+        payload: {
+            idx
+        }
+    }
+}
+
+export const decrementFlutterCount = () => {
+    return {
+        type: BirdActionTypes.DECREMENT_FLUTTER_COUNT,
+    }
+}
+
+export const flutterBirds = () => {
+    return {
+        type: BirdActionTypes.FLUTTER_BIRDS,
+    }
+}
+
 export const checkEdges = () => {
     return {
         type : BirdActionTypes.CHECK_EDGES,
@@ -159,6 +204,15 @@ export const checkNeighborBirds = (idx) => {
     }
 }
 
+export const growBird = (idx) => {
+    return {
+        type: BirdActionTypes.GROW_BIRD,
+        payload: {
+            idx
+        }
+    }
+}
+
 
 export const incrementIDX = () => {
     return {
@@ -240,6 +294,13 @@ export const resetHovered = () => {
 export const resetClicked = () => {
     return {
         type : BirdActionTypes.RESET_CLICKED, 
+
+    }
+}
+
+export const resetGrowing = () => {
+    return {
+        type : BirdActionTypes.RESET_GROWING, 
 
     }
 }

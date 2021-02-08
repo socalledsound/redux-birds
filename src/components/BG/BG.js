@@ -11,14 +11,14 @@ const shaders = Shaders.create({
   void main()
   {
       // vec2 u = 8. * uv/iResolution.x;
-        vec2 u = 8. * uv * 20.;
+        vec2 u = (uv * 8.) + (10. * sin(u_time/200.));
       
-      vec2 s = vec2(1.,10.732);
-      vec2 a = fract(mod(u ,s) * 100.-s);
-      vec2 b = mod(u+s*.5,s)*2.+s;
+      vec2 s = vec2(2.,1.732);
+      vec2 a = mod(u ,s) * 2.-s;
+      vec2 b = mod(u+s *.5,s)* 2. -s;
       
       //gl_FragColor = vec4(.5* min( dot(a,a), dot(b,b) ));
-      gl_FragColor = vec4(.2* min( dot(a,a), dot(b,b) ), .8  * min( dot(a,a), dot(b,b) ), .2 * min( dot(a,a), dot(a,b) ), 0.5);
+      gl_FragColor = vec4(.12* min( dot(a,b), dot(b,b) ), (.22 + sin((u_time+100.))/10.)  * min( dot(a,a), dot(b,b) ), .12 * min( dot(a,a), dot(a,b) ), 0.5);
   }`
   }
 });

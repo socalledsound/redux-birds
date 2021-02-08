@@ -38,6 +38,8 @@ const INITIAL_STATE = {
     routineStarted: false,
     routinePlaying : false,
     playNow: false,
+    fluttering: false,
+    flutterCount: 0,
     
 }
 
@@ -134,8 +136,10 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
             case BirdActionTypes.MOVE_BIRDS : 
             
             const movedBirds = [...state.birds].map(bird => {
-                bird.location.x += bird.velocity.x;
-                bird.location.y += bird.velocity.y;
+                const flutterDirX = Math.random() > 0.7 ? -1 : 1;
+                const flutterDirY = Math.random() > 0.7 ? -1 : 1;
+                bird.location.x += bird.velocity.x *= flutterDirX;
+                bird.location.y += bird.velocity.y *= flutterDirY;
                 bird.velocity.x *= bird.friction;
                 bird.velocity.y *= bird.friction;
                 return bird
@@ -144,6 +148,21 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
                 ...state,
                 birds: movedBirds,
             }
+
+
+            case BirdActionTypes.FLUTTER_BIRDS : 
+            
+            const flutteredBirds = [...state.birds].map(bird => {
+                bird.velocity =  { x: Math.random() * 7.0, y: Math.random() * 7.0 };
+                return bird
+            });
+            return {
+                ...state,
+                birds: flutteredBirds,
+                fluttering: true,
+                flutterCount: 100,
+            }
+
 
             case BirdActionTypes.CHECK_EDGES : 
                 const checkEdgeBirds = [...state.birds].map( bird => {
@@ -200,7 +219,19 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 birds: resetPlayBirds,
-            }            
+            }  
+            
+            case BirdActionTypes.GROW_BIRD : 
+            console.log(action.payload.idx);
+            const growBirds = [...state.birds];
+
+            growBirds[action.payload.idx].growing = true; 
+            growBirds[action.payload.idx].headSize = growBirds[action.payload.idx].headSize + 5; 
+            // console.log(playBackBirds[action.payload.idx].beingPlayed);
+            return {
+                ...state,
+                birds: growBirds,
+            }      
             
         case BirdActionTypes.RUN_ROUTINE : 
             const playNow = generatePlaybackProbability();
@@ -230,14 +261,16 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
                
             const checkedNeighbors = [...state.birds].map( bird => {
 
-                if(checkNeighbors(bird, state.birds, 10)){
+                if(checkNeighbors(bird, state.birds, bird.headSize/50) && !bird.growing){
                     bird.velocity.x *= -1;
                     bird.velocity.y *= -1;
-                    bird.headSize *= 0.5;
-                    bird.location.x += bird.velocity.x * 5.0;
-                    bird.location.y += bird.velocity.y * 5.0;
+                    bird.headSize *= 0.9;
+                    bird.location.x += bird.velocity.x * 15.0;
+                    bird.location.y += bird.velocity.y * 15.0;
                     bird.triggerSound= true;
+                    
                 }
+                return bird
             })
                             return {
                                 ...state,
@@ -336,6 +369,34 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
                     birds: hoveredBirds,
                 }
 
+        case BirdActionTypes.TRIGGER_BOUNCING :
+            
+                const bouncingBirds = [...state.birds];
+                    bouncingBirds[action.payload.idx].bouncing = true;   
+                    bouncingBirds[action.payload.idx].bounceCount = 10;
+                
+                    return {
+                        ...state,
+                        birds: bouncingBirds,
+                    }
+        case BirdActionTypes.RESET_BOUNCING :
+
+            const resetBouncing = [...state.birds];
+                resetBouncing[action.payload.idx].bouncing = false;   
+               
+            
+                return {
+                    ...state,
+                    birds: resetBouncing,
+                }                    
+        case BirdActionTypes.DECREMENT_BOUNCE_COUNT :
+            const   decBounceCount = [...state.birds];
+                    decBounceCount[action.payload.idx].bounceCount -=1;
+                    return {
+                        ...state,
+                        birds: decBounceCount,
+                        
+                    } 
 
         case BirdActionTypes.UPDATE_MOUSE_POS :
             return {
@@ -348,16 +409,35 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
                 const newObj = {
                     ...bird,
                     clicked: false,
+                    growing: false,
                 }
                 return newObj
             });
+
+
         
             return {
                 ...state,
                 birds: resetBirds,
                 dragActive: false,
                 activeId: null,
-            }    
+            }  
+            
+            case BirdActionTypes.RESET_FLUTTERING :
+
+                return {
+                    ...state,
+                    fluttering: false,
+                    
+                }  
+            case BirdActionTypes.DECREMENT_FLUTTER_COUNT :
+
+                    return {
+                        ...state,
+                        flutterCount: state.flutterCount -1,
+                        
+                    }    
+             
 
         case BirdActionTypes.CHANGE_EYE_COLOR : 
             const toggledBirds = [...state.birds];
