@@ -11,6 +11,19 @@ export const resizeScreen = (width, height) => {
     };
 }
 
+
+export const checkOffScreen = () => {
+    return {
+        type: BirdActionTypes.CHECK_OFFSCREEN,
+    }
+}
+
+export const checkTooSmall = () => {
+    return {
+        type: BirdActionTypes.CHECK_TOOSMALL,
+    }
+}
+
 export const updateBuffers = ( buffers) => {
     return {
         type: BirdActionTypes.UPDATE_BUFFERS,
@@ -56,6 +69,16 @@ export const moveBirds = () => {
 export const resetFluttering = () => {
     return {
         type: BirdActionTypes.RESET_FLUTTERING,
+    }
+}
+
+export const updateDraggingBird = (idx, mousePos) => {
+    return {
+        type : BirdActionTypes.UPDATE_DRAGGING_BIRD,
+        payload : {
+            idx,
+            mousePos
+        }
     }
 }
 

@@ -19,7 +19,8 @@ class BirdData {
         this.currentScreenCenter = {x: svgWidth/2, y: svgHeight/2};
         this.velocity = { x: Math.random() * 2.0, y: Math.random() * 2.0 };
         this.acceleration = {x: 0, y: 0};
-        this.friction = 0.92;
+        this.flutterFriction = 0.92;
+        this.dragFriction = 0.8;
         this.toCenter = tweenToDestination(this.location, this.currentScreenCenter, GlobalSettings.toCenterResolution);
         this.toEdge = tweenToDestination(this.currentScreenCenter, GlobalSettings.edge, GlobalSettings.toCenterResolution);
         this.toBig = mySimpleTween(this.clickedHeadSize, GlobalSettings.maxHeadSize, GlobalSettings.growResolution);

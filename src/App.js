@@ -39,6 +39,9 @@ import {
     triggerBouncing,
     decrementBounceCount, 
     resetBouncing,
+    updateDraggingBird,
+    checkOffScreen, 
+    checkTooSmall,
 } from './redux/birds.actions';
 
 import MainView from './components/MainView';
@@ -143,9 +146,10 @@ class App extends React.Component {
                     toggleRoutinePlaying, playNow, flutterBirds, fluttering, flutterCount,
                     birds, checkNeighborBirds,growBird,resetFluttering, decrementFlutterCount,
                     moveBirds, checkEdges, resetTriggerSound, triggerBouncing,
-                    decrementBounceCount, resetBouncing } = this.props;
+                    decrementBounceCount, resetBouncing, updateDraggingBird,
+                checkOffScreen, checkTooSmall } = this.props;
             // const { hatchCount } = this.state
-           //console.log(tickerStarted, timeTick, 'in start ticker')
+         
             
                 tickTime();
                 // incrementCircleSize();
@@ -163,8 +167,10 @@ class App extends React.Component {
                 // }
 
 
-                console.log(timeTick);
+                // console.log(timeTick);
                 if(timeTick > 100){
+                    checkOffScreen();
+                    checkTooSmall();
                     breatheAll();
                     moveEyes();  
                     moveBirds();
@@ -188,10 +194,10 @@ class App extends React.Component {
 
 
                     birds.forEach( bird => {
-                        Math.random() > 0.9 && growBird(bird.id); 
+                        Math.random() > GlobalSettings.mainGrowProb && growBird(bird.id); 
 
                         checkNeighborBirds(bird.id);
-                        console.log('should have checked neighbors');
+                    
 
                         if(bird.triggerSound){
                             this.playBounceSound(bird);
@@ -214,15 +220,15 @@ class App extends React.Component {
                 }
 
                 if(routineStarted){
-                    // console.log(playNow, routinePlaying);
+                   
                         if(!routinePlaying && !playNow){
                             runRoutine();
-                            // console.log('runRoutine called');
+                          
                         }
 
                         if(playNow){
                             toggleRoutinePlaying();
-                            // this.playRoutine();
+                            this.playRoutine();
                             
                         }
                        
@@ -234,17 +240,16 @@ class App extends React.Component {
 
                 }
 
-                // console.log(dragActive, activeID);
-                // console.log(birds[activeID]);
+   
                 if(dragActive && activeID !== null){
-                        // console.log(mousePos);
-                        // console.log(mouseRef);
+   
                         const eyeOffsetX = mousePos.x - mouseRef.x;
                         const eyeOffsetY = mousePos.y - mouseRef.y;
                         growBird(activeID);
                         rollEyes(activeID, eyeOffsetX, eyeOffsetY);
+                        updateDraggingBird(activeID, mousePos);
                         let dist = getDistance(this.lastMousePos, mousePos);
-                        //console.log(dist);
+                     
                         if(dist > GlobalSettings.scrubSensitivity){
                             this.lastMousePos = mousePos
                             this.playSound(activeID, mousePos.x-mouseRef.x, mousePos.y-mouseRef.y);
@@ -375,25 +380,30 @@ class App extends React.Component {
      playSound(idx, eyeOffsetX, eyeOffsetY){
         const { birds } = this.props;
         const buf = eyeOffsetX < 0 ? this.buffers[idx%GlobalSettings.numSounds] : this.reversedBuffers[idx%GlobalSettings.numSounds];
-        console.log(buf.duration);
+        console.log('playing sound:', idx);
 
         const scrubValue = (Math.abs(eyeOffsetX)/500)%buf.duration;
-        const changedRate = 1.0 - Math.abs(eyeOffsetY)/100;
-       // const 
+        const changedRate = 1.0 - Math.abs(eyeOffsetY/10)/100;
 
-        //const scrubValue = absOffset > (buf.duration - 0.1) ? (buf.duration - 0.1) : absOffset;
+
+      
         if(this.state.isPlaying){
             this.source.stop(0);
             this.setState({isPlaying: false});
         }
         
        this.source = audioContext.createBufferSource();
-       console.log('pbrate', changedRate * 300/birds[idx].headSize);
-        // if( source ) { source.stop(0); }
+
+        let rate = changedRate * 100/birds[idx].headSize;
+        if(rate > 2.0){
+            rate = 3.0;
+        } else if(rate < 0.4){
+            rate = 0.2;
+        }
         this.source.buffer = buf
         this.source.connect(audioContext.destination);
         const offset = scrubValue * buf.duration;
-        this.source.playbackRate.value = changedRate * 300/birds[idx].headSize;
+        this.source.playbackRate.value = rate;
         this.source.start(0, offset, 0.25);
         this.setState({isPlaying: true});
     }
@@ -422,9 +432,16 @@ class App extends React.Component {
         gainNode.gain.value = 0.5;
         gainNode.connect(audioContext.destination);
         pbSource.connect(gainNode);
-        //const offset = pbValues.offset * buf.duration;
-        pbSource.playbackRate.value = Math.abs(bird.velocity.x)/5.0 + 0.5;
-        pbSource.start(0, 0.0, buf.duration);
+       
+        let rate = Math.abs(bird.velocity.x)/5.0 + 0.5;
+        if(rate > 4.0){
+            rate = 4.0;
+        } else if(rate < 0.2){
+            rate = 0.2;
+        }
+        pbSource.playbackRate.value = rate;
+        const offset = Math.random() * buf.duration;
+        pbSource.start(0, offset, 0.1 + Math.random());
     }
 
     playRoutineSound(pbValues){
@@ -543,6 +560,9 @@ const mapDispatchToProps = dispatch => ({
     triggerBouncing : (id) => dispatch(triggerBouncing(id)),
     decrementBounceCount : (id) => dispatch(decrementBounceCount(id)),
     resetBouncing : (id) => dispatch(resetBouncing(id)),
+    updateDraggingBird : (idx, mousePos) => dispatch(updateDraggingBird(idx, mousePos)),
+    checkOffScreen : () => dispatch(checkOffScreen()),
+    checkTooSmall : () => dispatch(checkTooSmall()),
 })
 
 

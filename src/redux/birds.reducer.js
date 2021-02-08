@@ -132,16 +132,61 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
                 ...state,
                 playNow : false,
             }   
+            case BirdActionTypes.CHECK_OFFSCREEN : 
+            
+            const offscreenBirds = [...state.birds].map(bird => {
+                if(bird.location.x < 0){
+                    bird.location.x = 10;
+                }
+                if(bird.location.x > state.svgWidth){
+                    bird.location.x = state.svgWidth -10;
+                }
+                if(bird.location.y < 0){
+                    bird.location.y = 10;
+                }
+                if(bird.location.y > state.svgHeight){
+                    bird.location.y = state.svgHeight - 10;
+                }
+                    
+                return bird
+            });
+            return {
+                ...state,
+                birds: offscreenBirds,
+            }
+
+            case BirdActionTypes.CHECK_TOOSMALL :
+            const tooSmallBirds = [...state.birds].map(bird => {
+                if(bird.headSize < 20){
+                    bird.headSize = 20;
+                }
+                    
+                return bird
+            });
+            return {
+                ...state,
+                birds: tooSmallBirds,
+            }
 
             case BirdActionTypes.MOVE_BIRDS : 
             
             const movedBirds = [...state.birds].map(bird => {
-                const flutterDirX = Math.random() > 0.7 ? -1 : 1;
-                const flutterDirY = Math.random() > 0.7 ? -1 : 1;
-                bird.location.x += bird.velocity.x *= flutterDirX;
-                bird.location.y += bird.velocity.y *= flutterDirY;
-                bird.velocity.x *= bird.friction;
-                bird.velocity.y *= bird.friction;
+                if(bird.fluttering && !bird.dragging){
+                    const flutterDirX = Math.random() > 0.7 ? -1 : 1;
+                    const flutterDirY = Math.random() > 0.7 ? -1 : 1;
+                    bird.location.x += bird.velocity.x *= flutterDirX;
+                    bird.location.y += bird.velocity.y *= flutterDirY;
+                    bird.velocity.x *= bird.flutterFriction;
+                    bird.velocity.y *= bird.flutterFriction;
+                } else if(bird.dragging){
+                    console.log('dragging bird');
+                    bird.location.x += bird.velocity.x;
+                    bird.location.y += bird.velocity.y;
+                    bird.velocity.x *= bird.dragFriction;
+                    bird.velocity.y *= bird.dragFriction;
+                }
+
+               
                 return bird
             });
             return {
@@ -149,11 +194,31 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
                 birds: movedBirds,
             }
 
+        
+            case BirdActionTypes.UPDATE_DRAGGING_BIRD :
+                const draggedBirds = [...state.birds];
+                const previous = draggedBirds[action.payload.idx].location;
+                draggedBirds[action.payload.idx].velocity = {   x: action.payload.mousePos.x - previous.x, 
+                                                                y: action.payload.mousePos.y - previous.y, 
+                                                            };
+                draggedBirds[action.payload.idx].location = {   x: action.payload.mousePos.x, 
+                                                                y: action.payload.mousePos.y, 
+                                                            };                                            
+                draggedBirds[action.payload.idx].dragging = true;
+            return {
+                ...state,
+                birds: draggedBirds,
+            }
+            
 
             case BirdActionTypes.FLUTTER_BIRDS : 
             
             const flutteredBirds = [...state.birds].map(bird => {
-                bird.velocity =  { x: Math.random() * 7.0, y: Math.random() * 7.0 };
+                if(!bird.dragging){
+                    bird.velocity =  { x: Math.random() * 7.0, y: Math.random() * 7.0 };
+                    bird.fluttering = true;
+                }
+  
                 return bird
             });
             return {
@@ -170,15 +235,15 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
                     if(bird.location.x + offset > state.svgWidth || bird.location.x < 0 + offset){
                         
                         bird.velocity.x *= -1;
-                        bird.headSize *= 0.5;
-                        bird.location.x += bird.velocity.x * 5.0;
+                        bird.headSize *= 0.9;
+                        bird.location.x += bird.velocity.x * 2.0;
                         bird.triggerSound= true;
                     }
                     if(bird.location.y + offset > state.svgHeight || bird.location.y < 0 + offset){
                         
                         bird.velocity.y *= -1
-                        bird.location.y += bird.velocity.y * 5.0;
-                        bird.headSize *= 0.5;
+                        bird.location.y += bird.velocity.y * 2.0;
+                        bird.headSize *= 0.9;
                         bird.triggerSound = true;
                     }
                     return bird
@@ -210,23 +275,23 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
                 birds: playBackBirds,
             }
             case BirdActionTypes.RESET_BIRD : 
-            console.log(action.payload.idx);
+           
             const resetPlayBirds = [...state.birds];
 
             resetPlayBirds[action.payload.idx].beingPlayed = false; 
             resetPlayBirds[action.payload.idx].irisColor = resetPlayBirds[action.payload.idx].mainIrisColor; 
-            // console.log(playBackBirds[action.payload.idx].beingPlayed);
+            
             return {
                 ...state,
                 birds: resetPlayBirds,
             }  
             
             case BirdActionTypes.GROW_BIRD : 
-            console.log(action.payload.idx);
+           
             const growBirds = [...state.birds];
 
             
-            if(growBirds[action.payload.idx].clicked){
+            if(growBirds[action.payload.idx].clicked || growBirds[action.payload.idx].headSize < 20){
                 growBirds[action.payload.idx].headSize += 5;
                 growBirds[action.payload.idx].growing = true; 
             } else {
@@ -276,15 +341,16 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
                
             const checkedNeighbors = [...state.birds].map( bird => {
 
-                if(checkNeighbors(bird, state.birds, bird.headSize/50) && !bird.growing){
+                if(checkNeighbors(bird, state.birds, bird.headSize/50) && !bird.growing && !bird.dragging){
                     bird.velocity.x *= -1;
                     bird.velocity.y *= -1;
-                    bird.headSize *= 1.0 - Math.random()* 20/100;
-                    bird.location.x += (GlobalSettings.bumpJumpMin + (bird.velocity.x * Math.random() * GlobalSettings.bumpJumpMax));
-                    bird.location.y += (GlobalSettings.bumpJumpMin + (bird.velocity.y * Math.random() * GlobalSettings.bumpJumpMax));
+                    bird.headSize *= 0.9;
+                    bird.location.x += bird.velocity.x * (GlobalSettings.bumpJumpMin + (Math.random() * GlobalSettings.bumpJumpMax));
+                    bird.location.y += bird.velocity.y * (GlobalSettings.bumpJumpMin + (Math.random() * GlobalSettings.bumpJumpMax));
                     bird.triggerSound= true;
-                    
                 }
+
+
                 return bird
             })
                             return {
@@ -363,6 +429,7 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
             clickedBirds[action.payload.idx].clicked = !clickedBirds[action.payload.idx].clicked;   
             const newActiveID = clickedBirds[action.payload.idx].clicked ? action.payload.idx : null;
             const newDragActive = clickedBirds[action.payload.idx].clicked ? true : false;
+            clickedBirds[action.payload.idx].fluttering = false; 
         
             return {
                 ...state,
@@ -371,6 +438,7 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
                 activeID: newActiveID,
                 mouseRef: state.mousePos,
             }
+
 
             case BirdActionTypes.UPDATE_HOVERED :
             
@@ -425,6 +493,7 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
                     ...bird,
                     clicked: false,
                     growing: false,
+                    dragging: false,
                 }
                 return newObj
             });
@@ -439,9 +508,17 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
             }  
             
             case BirdActionTypes.RESET_FLUTTERING :
+                const notFlutteringBirds = [...state.birds].map( bird => 
+                     ({
+                        ...bird,
+                        fluttering : false,
+                     })
+                )
+                    
 
                 return {
                     ...state,
+                    birds: notFlutteringBirds,
                     fluttering: false,
                     
                 }  
