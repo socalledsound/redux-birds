@@ -14,6 +14,9 @@ const GlobalSettings = {
     edge: {x: 50, y: 50},
     settledOpacity: 0.8,
     scrubSensitivity: 10,
+    mainGrowProb : 0.99,
+    bumpJumpMin: 10.0,
+    bumpJumpMax: 50.0,
 
 }
 

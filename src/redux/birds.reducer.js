@@ -225,13 +225,28 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
             console.log(action.payload.idx);
             const growBirds = [...state.birds];
 
-            growBirds[action.payload.idx].growing = true; 
-            growBirds[action.payload.idx].headSize = growBirds[action.payload.idx].headSize + 5; 
-            // console.log(playBackBirds[action.payload.idx].beingPlayed);
+            
+            if(growBirds[action.payload.idx].clicked){
+                growBirds[action.payload.idx].headSize += 5;
+                growBirds[action.payload.idx].growing = true; 
+            } else {
+                growBirds[action.payload.idx].headSize +=1;
+            }
             return {
                 ...state,
                 birds: growBirds,
-            }      
+            }   
+            // case BirdActionTypes.GROW_BIRD_CLICKED : 
+            // console.log(action.payload.idx);
+            // const growBirds = [...state.birds];
+
+            // growBirds[action.payload.idx].growing = true; 
+            // growBirds[action.payload.idx].headSize = growBirds[action.payload.idx].headSize + 5; 
+            // // console.log(playBackBirds[action.payload.idx].beingPlayed);
+            // return {
+            //     ...state,
+            //     birds: growBirds,
+            // }              
             
         case BirdActionTypes.RUN_ROUTINE : 
             const playNow = generatePlaybackProbability();
@@ -264,9 +279,9 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
                 if(checkNeighbors(bird, state.birds, bird.headSize/50) && !bird.growing){
                     bird.velocity.x *= -1;
                     bird.velocity.y *= -1;
-                    bird.headSize *= 0.9;
-                    bird.location.x += bird.velocity.x * 15.0;
-                    bird.location.y += bird.velocity.y * 15.0;
+                    bird.headSize *= 1.0 - Math.random()* 20/100;
+                    bird.location.x += (GlobalSettings.bumpJumpMin + (bird.velocity.x * Math.random() * GlobalSettings.bumpJumpMax));
+                    bird.location.y += (GlobalSettings.bumpJumpMin + (bird.velocity.y * Math.random() * GlobalSettings.bumpJumpMax));
                     bird.triggerSound= true;
                     
                 }

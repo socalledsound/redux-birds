@@ -163,7 +163,7 @@ class App extends React.Component {
                 // }
 
 
-
+                console.log(timeTick);
                 if(timeTick > 100){
                     breatheAll();
                     moveEyes();  
@@ -188,7 +188,11 @@ class App extends React.Component {
 
 
                     birds.forEach( bird => {
-                        checkNeighborBirds(bird.id)
+                        Math.random() > 0.9 && growBird(bird.id); 
+
+                        checkNeighborBirds(bird.id);
+                        console.log('should have checked neighbors');
+
                         if(bird.triggerSound){
                             this.playBounceSound(bird);
                             triggerBouncing(bird.id);
