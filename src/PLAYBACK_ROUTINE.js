@@ -1,6 +1,6 @@
 
 export const RoutineSettings = {
-    globalCoin : 0.99,
+    globalCoin : 0.9,
 }
 
 export const generatePlaybackProbability = () => {

@@ -475,13 +475,17 @@ class App extends React.Component {
 
 
     render(){
-        const { svgWidth, svgHeight, birds, timeTick } = this.props;
-       // console.log(birds);
-       //console.log(buffers);
-        //console.log(svgHeight);
+        const { svgWidth, svgHeight, birds, timeTick, activeID } = this.props;
+        let xFactor = 0;
+        // console.log(birds, birds.length, activeID, svgWidth);
+        if(birds && birds.length > 0 && activeID && svgWidth){
+            xFactor = birds[activeID].location.x/svgWidth;
+        } 
+       
+
         return (
             <React.Fragment>
-                <BG u_time={timeTick}/>
+                <BG u_time={timeTick} xFactor={xFactor}/>
                 <MainView 
                 svgWidth={svgWidth} 
                 svgHeight={svgHeight} 
