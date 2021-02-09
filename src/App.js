@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import BG from './components/BG/BG';
+// import BG from './components/BG/BG';
 import {
     resizeScreen,
     updateBuffers,
@@ -490,17 +490,19 @@ class App extends React.Component {
 
 
     render(){
-        const { svgWidth, svgHeight, birds, timeTick, activeID } = this.props;
-        let xFactor = 0;
+        const { svgWidth, svgHeight, birds} = this.props;
+        // const { timeTick, activeID }  = this.props;
+        // let xFactor = 0;
         // console.log(birds, birds.length, activeID, svgWidth);
-        if(birds && birds.length > 0 && activeID && svgWidth){
-            xFactor = birds[activeID].location.x/svgWidth;
-        } 
+        // if(birds && birds.length > 0 && activeID && svgWidth){
+        //     xFactor = birds[activeID].location.x/svgWidth;
+        // } 
        
 
         return (
             <React.Fragment>
-                <BG u_time={timeTick} xFactor={xFactor}/>
+                {/* <BG u_time={timeTick} xFactor={xFactor}/> */}
+                {/* <Menu /> */}
                 <MainView 
                 svgWidth={svgWidth} 
                 svgHeight={svgHeight} 
