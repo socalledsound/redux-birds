@@ -27,10 +27,11 @@ import {
     toggleRoutinePlaying,
     playNotNow,
     playBird,
-    resetBirdWithTimeout,
+    updateBeingPlayedBird,
+    resetBird,
     moveBirds,
     checkEdges,
-    resetTriggerSound,
+    resetTriggerSoundAsync,
     growBird,
     flutterBirds,
     resetFluttering,
@@ -145,9 +146,9 @@ class App extends React.Component {
                     runRoutine, startRoutine, routineStarted, routinePlaying, changeEyeColor,
                     toggleRoutinePlaying, playNow, flutterBirds, fluttering, flutterCount,
                     birds, checkNeighborBirds,growBird,resetFluttering, decrementFlutterCount,
-                    moveBirds, checkEdges, resetTriggerSound, triggerBouncing,
-                    decrementBounceCount, resetBouncing, updateDraggingBird,
-                checkOffScreen, checkTooSmall } = this.props;
+                    moveBirds, checkEdges, resetTriggerSoundAsync, triggerBouncing,
+                    decrementBounceCount, resetBouncing, updateDraggingBird, resetBird,
+                checkOffScreen, checkTooSmall, updateBeingPlayedBird } = this.props;
             // const { hatchCount } = this.state
          
             
@@ -204,7 +205,7 @@ class App extends React.Component {
                             triggerBouncing(bird.id);
                             changeEyeColor(bird.id);
                             rollEyes(bird.id, bird.velocity.x * 100, bird.velocity.y * 100);
-                            resetTriggerSound(bird.id);
+                            resetTriggerSoundAsync(bird.id);
                         }
 
                         if(bird.bouncing && bird.bounceCount > 0){
@@ -215,6 +216,14 @@ class App extends React.Component {
                         if(bird.bouncing && bird.bounceCount === 0){
                             resetBouncing(bird.id);
                             changeEyeColor(bird.id)
+                        }
+                        
+                        if(bird.beingPlayed && bird.beingPlayedCount > 0){
+                            console.log('being played', bird.beingPlayedCount);
+                            rollEyes(bird.id, bird.eyeRollOffset.x, bird.eyeRollOffset.y);
+                            updateBeingPlayedBird(bird.id)
+                        } else if(bird.beingPlayed && bird.beingPlayedCount === 0){
+                            resetBird(bird.id)
                         }
                     })
                 }
@@ -410,22 +419,28 @@ class App extends React.Component {
 
 
     playRoutine = () => {
-        const { toggleRoutinePlaying, playBird, resetBird, rollEyes, playNotNow, playBackIndex, playbackValues} = this.props;
-        
+        const { toggleRoutinePlaying, playBird, rollEyes, playNotNow, playBackIndex, playbackValues} = this.props;
+
         playNotNow();
         const pbValues = playbackValues[playBackIndex];
+        const eyeRollOffset = {
+            x : pbValues.offset * -1  * 100 , 
+            y : pbValues.rate * 100 ,
+        }
+        console.log(eyeRollOffset);
         console.log(pbValues, playbackValues, playBackIndex);
         this.playRoutineSound(pbValues);
-        playBird(pbValues.birdNum);
-        rollEyes(pbValues.birdNum, pbValues.offset * -1 * pbValues.dir * 100, pbValues.rate * 100);
-        resetBird(pbValues.birdNum, pbValues.duration * 2000)
-        setTimeout(toggleRoutinePlaying, pbValues.duration * 10000);
+        playBird(pbValues.birdNum, eyeRollOffset, Math.floor(pbValues.playLength* 10), pbValues.dir);
+        rollEyes(pbValues.birdNum, eyeRollOffset.x, eyeRollOffset.y);
+        
+        console.log('started', pbValues.birdNum)
+        setTimeout(toggleRoutinePlaying, pbValues.playLength * 2000);
     }
     
     playBounceSound = (bird) => {
-        console.log(bird);
+        // console.log(bird);
         const buf = bird.velocity.x < 0 ? this.buffers[bird.id % GlobalSettings.numSounds] : this.reversedBuffers[bird.id % GlobalSettings.numSounds];
-        console.log(buf.duration);
+        // console.log(buf.duration);
         const pbSource = audioContext.createBufferSource();
         const gainNode = audioContext.createGain();
         pbSource.buffer = buf;
@@ -441,7 +456,7 @@ class App extends React.Component {
         }
         pbSource.playbackRate.value = rate;
         const offset = Math.random() * buf.duration;
-        pbSource.start(0, offset, 0.1 + Math.random());
+        pbSource.start(0, offset, 5.0 + Math.random());
     }
 
     playRoutineSound(pbValues){
@@ -455,7 +470,7 @@ class App extends React.Component {
         gainNode.connect(audioContext.destination);
         pbSource.connect(gainNode);
         const offset = pbValues.offset * buf.duration;
-        pbSource.playbackRate.value = pbValues.rate/(birds[pbValues.birdNum].headSize/50.0);
+        pbSource.playbackRate.value = pbValues.rate/(birds[pbValues.birdNum].headSize/30.0);
         pbSource.start(0, offset, pbValues.playLength);
         // this.setState({isPlaying: true});
     }
@@ -550,13 +565,14 @@ const mapDispatchToProps = dispatch => ({
     runRoutine : () => dispatch(runRoutine()),
     toggleRoutinePlaying : () => dispatch(toggleRoutinePlaying()),
     playNotNow : () => dispatch(playNotNow()),
-    playBird : (idx) => dispatch(playBird(idx)),
-    resetBird : (idx, wait) => resetBirdWithTimeout(dispatch, idx, wait),
+    playBird : (idx, eyeRollOffset, beingPlayedCount, pbDir) => dispatch(playBird(idx, eyeRollOffset, beingPlayedCount, pbDir)),
+    updateBeingPlayedBird : (id) => dispatch(updateBeingPlayedBird(id)),
+    resetBird : (idx, wait) => dispatch(resetBird(idx, wait)),
     moveBirds : () => dispatch(moveBirds()),
     flutterBirds : () => dispatch(flutterBirds()),
     checkEdges : () => dispatch(checkEdges()),
     checkNeighborBirds : (idx) => dispatch(checkNeighborBirds(idx)),
-    resetTriggerSound : (idx) => dispatch(resetTriggerSound(idx)),
+    resetTriggerSoundAsync : (idx) => dispatch(resetTriggerSoundAsync(idx)),
     growBird : (idx) => dispatch(growBird(idx)),
     resetFluttering : () => dispatch(resetFluttering()),
     decrementFlutterCount : () => dispatch(decrementFlutterCount()),

@@ -1,3 +1,4 @@
+import Bird from '../components/Bird';
 import { BirdActionTypes } from './birds.actions.types';
 
 
@@ -136,6 +137,12 @@ export const resetTriggerSound = (idx) => {
     }
 }
 
+export const resetTriggerSoundAsync = (idx) => {
+    return dispatch => {
+        setTimeout(() => dispatch(resetTriggerSound(idx)), 0)
+    }
+}
+
 export const startRoutine = ( ) => {
     return {
         type: BirdActionTypes.START_ROUTINE,
@@ -196,11 +203,23 @@ export const addBird = (bird) => {
     }
 }
 
-export const playBird = (idx, wait) => {
+export const playBird = (idx, eyeRollOffset, beingPlayedCount, pbDir) => {
     return {
         type : BirdActionTypes.PLAY_BIRD,
         payload : {
             idx,
+            eyeRollOffset,
+            beingPlayedCount,
+            pbDir,
+        }
+    }
+}
+
+export const updateBeingPlayedBird = id => {
+    return {
+        type : BirdActionTypes.UPDATE_BEING_PLAYED_BIRD,
+        payload : {
+            id
         }
     }
 }
@@ -214,9 +233,13 @@ export const resetBird = (idx) => {
     }
 }
 
-export const resetBirdWithTimeout = (dispatch, idx, wait) => {
-    setTimeout(() => {dispatch(resetBird(idx))}, wait);
-}
+// export const resetBirdWithTimeout = (idx, wait) => {
+//     return dispatch => 
+//         setTimeout(() => {
+//             dispatch(resetBird(idx));
+//             console.log('reset bird', idx);
+//         }, wait); 
+// }
 
 export const checkNeighborBirds = (idx) => {
     return {

@@ -266,16 +266,35 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
         case BirdActionTypes.PLAY_BIRD : 
             
             const playBackBirds = [...state.birds];
-
+            // console.log(action.payload.beingPlayedCount);
             playBackBirds[action.payload.idx].beingPlayed = true; 
+            playBackBirds[action.payload.idx].beingPlayedCount = action.payload.beingPlayedCount;
+            playBackBirds[action.payload.idx].eyeRollOffset = action.payload.eyeRollOffset; 
+            playBackBirds[action.payload.idx].playDir = action.payload.pbDir; 
             playBackBirds[action.payload.idx].irisColor = playBackBirds[action.payload.idx].redIrisColor; 
-            // console.log(playBackBirds[action.payload.idx].beingPlayed);
+             console.log(playBackBirds[action.payload.idx].beingPlayed, playBackBirds[action.payload.idx].beingPlayedCount);
             return {
                 ...state,
                 birds: playBackBirds,
             }
+
+            case BirdActionTypes.UPDATE_BEING_PLAYED_BIRD :
+            const updateBeingPlayedBirds = [...state.birds];
+            const newRandomOffsetX = (Math.random() * 20);
+            const newRandomOffsetY = (Math.random() * 20);
+            const dir = updateBeingPlayedBirds[action.payload.id].playDir;
+            updateBeingPlayedBirds[action.payload.id].beingPlayedCount -= 1;
+            updateBeingPlayedBirds[action.payload.id].eyeRollOffset.x += newRandomOffsetX * dir;
+            updateBeingPlayedBirds[action.payload.id].eyeRollOffset.y += newRandomOffsetY * dir;
+                    // console.log(updateBeingPlayedBirds[action.payload.id].beingPlayedCount);
+            return {
+                ...state,
+                birds: updateBeingPlayedBirds
+            }
+
+
             case BirdActionTypes.RESET_BIRD : 
-           
+            console.log('shopuld reset bird here');
             const resetPlayBirds = [...state.birds];
 
             resetPlayBirds[action.payload.idx].beingPlayed = false; 
@@ -284,7 +303,9 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 birds: resetPlayBirds,
-            }  
+            } 
+            
+            
             
             case BirdActionTypes.GROW_BIRD : 
            

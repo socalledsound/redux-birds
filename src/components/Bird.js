@@ -16,13 +16,22 @@ class Bird extends React.Component {
     constructor(props){
         super(props)
         this.sound = this.props.howl;
+        this.svgRef = React.createRef();
         
     }
     
 
     componentDidMount(){
-        
+        const { id } = this.props;
+        this.svgRef.current.addEventListener("touchstart", () => {
+            this.updateClicked(id);
+            
+         });
 
+         this.svgRef.current.addEventListener("touchend", () => {
+            this.updateClicked(id);
+            
+         });
     }
 
     calculateLeftEyePos(location, headSize, randomLeftEyeVal, eyeRollOffset){
@@ -94,7 +103,7 @@ class Bird extends React.Component {
         }
         if(!clicked && !beingPlayed){
             return (
-                <g className="bird" id={`bird${id}`} style={{position: 'absolute'}}  onMouseDown={() => this.updateClicked(id)} onMouseUp={() => this.updateClicked(id)} onMouseEnter={() => this.updateHovered(id)} onMouseLeave={() => this.updateHovered(id)}>
+                <g ref={this.svgRef} className="bird" id={`bird${id}`} style={{position: 'absolute'}}  onMouseDown={() => this.updateClicked(id)} onMouseUp={() => this.updateClicked(id)} onMouseEnter={() => this.updateHovered(id)} onMouseLeave={() => this.updateHovered(id)}>
                 <Head x={location.x} y={location.y} headSize={headSize} headColor1={headColor1} headColor2={headColor2} opacity={opacity}/> 
                 
                 <Eye x={location.x - headSize/3 + randomLeftEyeVal} y={location.y - headSize/9} size={headSize/3} eyeWhiteColor={'#FFF'} irisColor={irisColor} pupilColor={'#000'} opacity={opacity}/>

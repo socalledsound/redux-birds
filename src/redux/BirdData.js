@@ -8,7 +8,7 @@ class BirdData {
         // console.log(randomHeadSizeScaler, svgHeight, GlobalSettings.minHeadSize);
         this.id = id;
         // this.howl = GlobalSettings.sounds[id % GlobalSettings.numSounds];
-        this.baseHeadSize = randomHeadSizeScaler * svgHeight/15 + svgWidth/25;
+        this.baseHeadSize = randomHeadSizeScaler * svgHeight/GlobalSettings.constructorHeightScaler + svgWidth/GlobalSettings.constructorWidthScaler;
         this.clickedHeadSize = this.baseHeadSize + 10;
         this.startHeadSize = 5;
         this.headSize = this.baseHeadSize;
@@ -42,6 +42,7 @@ class BirdData {
         this.eyeRollOffset = {x: 0, y: 0};
         this.theta = 0;
         this.opacity = 1.0;
+        this.beingPlayedCount = 0;
         this.showing= false;
         this.eyeToggle  = false;
         this.breathe = true;

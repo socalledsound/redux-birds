@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import BirdSystem from './BirdSystem';
+// import Box1 from './Box1';
 
 
 const mainViewStyle = {
@@ -17,15 +18,23 @@ class MainView extends Component {
     }
     
     componentDidMount() {
-
-        this.svgRef.current.addEventListener("mousedown", (e) => {
+        const { resetClicked, updateMousePos } = this.props;
+        this.svgRef.current.addEventListener("touchstart", (e) => {
+            e.preventDefault();
            // this.props.updateMousePos(e.clientX, e.clientY);
            // this.props.startDrawing();
         });
 
-        this.svgRef.current.addEventListener("mouseup", () => {
-           // this.props.stopDrawing();
+        this.svgRef.current.addEventListener("touchmove", (e) => {
+            e.preventDefault();
+
+            updateMousePos(e.touches[0].pageX, e.touches[0].pageY)
         });
+
+        this.svgRef.current.addEventListener("touchend", (e) => {
+            e.preventDefault();
+            resetClicked();
+         });
     }
 
 
@@ -33,15 +42,17 @@ class MainView extends Component {
         const { svgWidth, svgHeight, birds, updateMousePos } = this.props;
         return (
             <div
-                 onMouseMove={(e) => updateMousePos(e.clientX, e.clientY)}
+                onMouseMove={(e) => updateMousePos(e.clientX, e.clientY)}
                 onMouseUp={() => this.props.resetClicked()}
                 style={{ overflow: "hidden" }}
+                ref={this.svgRef}
             >
                 
                 <svg
                     style={{...mainViewStyle, width: svgWidth, height: svgHeight }}
-                    ref={this.svgRef}
+                    
                 >
+                    {/* <Box1 box1coords={}/> */}
                     <BirdSystem birds={birds} />
                 </svg>
                
