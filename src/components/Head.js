@@ -37,7 +37,7 @@ const Head = ({ x, y, headSize, headColor1, headColor2, opacity } ) =>  {
                                 fill={colors[i]} 
                                 stroke={headColor1} 
                                 strokeWidth="90%" 
-                                opacity={`${i/70}`}
+                                opacity={`${i/40}`}
                                 
                     
                             />

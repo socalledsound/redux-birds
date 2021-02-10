@@ -3,7 +3,7 @@
 const GlobalSettings = {
     // sounds: howls,
     numSounds: 8,
-    numBirds: 5,
+    numBirds: 3,
     birdWaitVal : 10000,
     constructorWidthScaler : 25,
     constructorHeightScaler : 25,

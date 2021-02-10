@@ -387,7 +387,7 @@ class App extends React.Component {
      }
 
      playSound(idx, eyeOffsetX, eyeOffsetY){
-        const { birds } = this.props;
+        const { birds, svgWidth } = this.props;
         const buf = eyeOffsetX < 0 ? this.buffers[idx%GlobalSettings.numSounds] : this.reversedBuffers[idx%GlobalSettings.numSounds];
         console.log('playing sound:', idx);
 
@@ -403,7 +403,7 @@ class App extends React.Component {
         
        this.source = audioContext.createBufferSource();
 
-        let rate = changedRate * 100/birds[idx].headSize;
+        let rate = changedRate * 100/birds[idx].headSize/(svgWidth/10);
         if(rate > 2.0){
             rate = 3.0;
         } else if(rate < 0.4){
@@ -460,7 +460,7 @@ class App extends React.Component {
     }
 
     playRoutineSound(pbValues){
-        const { birds } = this.props;
+        const { birds, svgWidth } = this.props;
         const buf = pbValues.dir < 0 ? this.buffers[pbValues.bufnum] : this.reversedBuffers[pbValues.bufnum];
         
        const pbSource = audioContext.createBufferSource();
@@ -470,7 +470,7 @@ class App extends React.Component {
         gainNode.connect(audioContext.destination);
         pbSource.connect(gainNode);
         const offset = pbValues.offset * buf.duration;
-        pbSource.playbackRate.value = pbValues.rate/(birds[pbValues.birdNum].headSize/30.0);
+        pbSource.playbackRate.value = pbValues.rate/(birds[pbValues.birdNum].headSize/(svgWidth/10));
         pbSource.start(0, offset, pbValues.playLength);
         // this.setState({isPlaying: true});
     }
@@ -503,7 +503,7 @@ class App extends React.Component {
 
         return (
             <React.Fragment>
-                <BG u_time={timeTick} xFactor={xFactor} yFactor={yFactor}/>
+                <BG u_time={timeTick} xFactor={xFactor} yFactor={yFactor} birds={birds}/>
                 {/* <Menu /> */}
                 <MainView 
                 svgWidth={svgWidth} 
