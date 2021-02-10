@@ -41,9 +41,9 @@ class Bird extends React.Component {
 
         
 
-        const rolledX = (location.x + Math.sin(eyeRollOffset.x/100 ) * (headSize * (0.9 - Math.abs(eyeRollOffset.y)/100)));
+        const rolledX = (location.x + Math.sin(eyeRollOffset.x/100 ) * (headSize * (0.9 - Math.abs(eyeRollOffset.y)/200)));
        
-        const rolledY = (location.y + Math.cos(eyeRollOffset.x/100) * (headSize * (0.9 - Math.abs(eyeRollOffset.y)/100)));
+        const rolledY = (location.y + Math.cos(eyeRollOffset.x/100) * (headSize * (0.9 - Math.abs(eyeRollOffset.y)/200)));
         //console.log(eyeRollOffset, rolledX, rolledY);
         return {
             x: rolledX,
@@ -57,8 +57,8 @@ class Bird extends React.Component {
         // const startX = location.x + headSize/3 - randomRightEyeVal + headSize/8;
         // const startY = location.y - headSize + headSize/10;
 
-        const rolledX = (location.x  + Math.sin(3.14 + eyeRollOffset.x/100 ) * (headSize * (0.9 - Math.abs(eyeRollOffset.y)/100)));
-        const rolledY = (location.y + Math.cos(3.14 + eyeRollOffset.x/100) * (headSize * (0.9 - Math.abs(eyeRollOffset.y)/100)));
+        const rolledX = (location.x  + Math.sin(3.14 + eyeRollOffset.x/100 ) * (headSize * (0.9 - Math.abs(eyeRollOffset.y)/200)));
+        const rolledY = (location.y + Math.cos(3.14 + eyeRollOffset.x/100) * (headSize * (0.9 - Math.abs(eyeRollOffset.y)/200)));
 
         return {
             x: rolledX,
