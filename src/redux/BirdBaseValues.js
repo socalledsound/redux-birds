@@ -1,4 +1,4 @@
-import { getRandomColor } from "../utils";
+import { getRandomPurple, getRandomColor } from "../utils";
 
 
 class BirdBaseValues {
@@ -7,8 +7,8 @@ class BirdBaseValues {
         this.randomXScaler = Math.random();
         this.randomYScaler = Math.random();
         this.randomHeadSizeScaler = Math.random();
-        this.color1 = getRandomColor();
-        this.color2 = getRandomColor();
+        this.color1 = getRandomPurple();
+        this.color2 = getRandomPurple();
         this.color3 = getRandomColor();
         // console.log(index);
     }

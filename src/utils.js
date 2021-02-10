@@ -8,6 +8,9 @@ export const getRandomColor = () => {
     return Math.floor(Math.random() * 2 ** 24).toString(16).padStart(6, "0")
 }
 
+export const getRandomPurple = () => {
+  return chroma.mix('red', 'blue', Math.random(), 'rgb');
+}
 
 export const mySimpleTween = (start, dest, steps) => Array.from({ length: steps }, (_, i) => (start + (dest/steps * i)) );
 
