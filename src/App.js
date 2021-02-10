@@ -179,6 +179,7 @@ class App extends React.Component {
                     moveEyes();  
                     moveBirds();
                     checkEdges();
+                    checkPopSize();
                     const flutter = Math.random() > 0.9 ? true : false;
                     if(flutter && !fluttering){
                         flutterBirds();
@@ -199,9 +200,10 @@ class App extends React.Component {
 
                     birds.forEach( bird => {
                         Math.random() > GlobalSettings.mainGrowProb && growBird(bird.id); 
-                        checkPopSize(bird);
-                        if(bird.popping){
-                            popBird(bird);
+                        
+                        if(bird.pop){
+                            console.log('should pop');
+                            popBird(bird.id);
                         }
                         checkNeighborBirds(bird.id);
                     
@@ -225,7 +227,7 @@ class App extends React.Component {
                         }
                         
                         if(bird.beingPlayed && bird.beingPlayedCount > 0){
-                            console.log('being played', bird.beingPlayedCount);
+                            // console.log('being played', bird.beingPlayedCount);
                             rollEyes(bird.id, bird.eyeRollOffset.x, bird.eyeRollOffset.y);
                             updateBeingPlayedBird(bird.id)
                         } else if(bird.beingPlayed && bird.beingPlayedCount === 0){
@@ -593,8 +595,8 @@ const mapDispatchToProps = dispatch => ({
     updateDraggingBird : (idx, mousePos) => dispatch(updateDraggingBird(idx, mousePos)),
     checkOffScreen : () => dispatch(checkOffScreen()),
     checkTooSmall : () => dispatch(checkTooSmall()),
-    checkPopSize : bird => dispatch(checkPopSize(bird)),
-    popBird : bird => dispatch(popBird(bird)),
+    checkPopSize : () => dispatch(checkPopSize()),
+    popBird : (idx) => dispatch(popBird(idx)),
 })
 
 

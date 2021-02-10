@@ -391,9 +391,12 @@ export const checkPopSize = () => {
     }
 }
 
-export const popBird = () => {
+export const popBird = (idx) => {
     return {
         type: BirdActionTypes.POP_BIRD,
+        payload: {
+            idx
+        }
     }
 }
 

@@ -85,20 +85,25 @@ float s(float n, float r)
 class HelloBlue extends React.Component {
     
   render() {
-    const { u_time, xFactor = 1, yFactor=1, iResolution, birds } = this.props;
-    console.log(xFactor, yFactor);
+    const { u_time, xFactor = 1, yFactor=1, iResolution,  } = this.props;
+    // const { u_time, xFactor = 1, yFactor=1, iResolution, birds } = this.props;
+    // console.log(xFactor, yFactor);
 
-    const glows = birds.map( bird => {
-      return [bird.location.x, bird.location.y];
-    })
+    // const glows = birds.map( bird => {
+    //   return [bird.location.x, bird.location.y];
+    // })
    
     // const glow1 = [birds[1].location.x, birds[1].location.y];
     // const glow2 = [birds[2].location.x, birds[2].location.y];
+
+    const glow0 = [100.0, 50.0];
+    const glow1 = [200.0, 500.0];
+const glow2 = [500.0,400.0];
     
       return (
         <div>
           
-        <Node shader={shaders.helloBlue} uniforms={{ u_time, xFactor, yFactor, iResolution }} />
+        <Node shader={shaders.helloBlue} uniforms={{ u_time, xFactor, yFactor, iResolution, glow0, glow1, glow2 }} />
       
         </div>
       )

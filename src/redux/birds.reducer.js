@@ -302,7 +302,7 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
            
             const growBirds = [...state.birds];            
             if(growBirds[action.payload.idx].clicked || growBirds[action.payload.idx].headSize < 20){
-                growBirds[action.payload.idx].headSize += 5;
+                growBirds[action.payload.idx].headSize += GlobalSettings.dragGrowInc;
                 growBirds[action.payload.idx].growing = true; 
             } else {
                 growBirds[action.payload.idx].headSize +=1;
@@ -560,14 +560,24 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
                 }    
         
         case BirdActionTypes.CHECK_POP_SIZE : 
-        
+            const poppingBirds = [...state.birds].map(bird => {
+                bird.headSize > state.svgWidth/4 ? bird.popping = true : bird.notPopping = true;
+                bird.headSize > state.svgWidth/4 ? bird.pop = true : bird.pop = false;
+                return bird
+            })
+
                 return {
-                    ...state
+                    ...state,
+                    birds: poppingBirds, 
                 }
-                case BirdActionTypes.POP_BIRD : 
-        
+
+        case BirdActionTypes.POP_BIRD : 
+                const poppedBirds = [...state.birds];
+                console.log(action.payload.idx)
+                poppedBirds[action.payload.idx].headSize = 20;
                 return {
-                    ...state
+                    ...state,
+                    birds: poppedBirds,
                 }        
 
         default: 
