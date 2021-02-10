@@ -223,7 +223,7 @@ class App extends React.Component {
 
                         if(bird.bouncing && bird.bounceCount === 0){
                             resetBouncing(bird.id);
-                            changeEyeColor(bird.id)
+                            changeEyeColor(bird.id);
                         }
                         
                         if(bird.beingPlayed && bird.beingPlayedCount > 0){
@@ -263,6 +263,7 @@ class App extends React.Component {
                         const eyeOffsetX = mousePos.x - mouseRef.x;
                         const eyeOffsetY = mousePos.y - mouseRef.y;
                         growBird(activeID);
+                        changeEyeColor(activeID);
                         rollEyes(activeID, eyeOffsetX, eyeOffsetY);
                         updateDraggingBird(activeID, mousePos);
                         let dist = getDistance(this.lastMousePos, mousePos);
@@ -395,7 +396,7 @@ class App extends React.Component {
      }
 
      playSound(idx, eyeOffsetX, eyeOffsetY){
-        const { birds, svgWidth } = this.props;
+        const { birds } = this.props;
         const buf = eyeOffsetX < 0 ? this.buffers[idx%GlobalSettings.numSounds] : this.reversedBuffers[idx%GlobalSettings.numSounds];
         // console.log('playing sound:', idx);
 
@@ -422,7 +423,7 @@ class App extends React.Component {
         this.source.connect(audioContext.destination);
         const offset = scrubValue * buf.duration;
         this.source.playbackRate.value = rate;
-        this.source.start(0, offset, 0.5);
+        this.source.start(0, offset, 0.25);
         this.setState({isPlaying: true});
     }
 
@@ -469,7 +470,7 @@ class App extends React.Component {
     }
 
     playRoutineSound(pbValues){
-        const { birds, svgWidth } = this.props;
+        const { birds } = this.props;
         const buf = pbValues.dir < 0 ? this.buffers[pbValues.bufnum] : this.reversedBuffers[pbValues.bufnum];
         
        const pbSource = audioContext.createBufferSource();
@@ -479,7 +480,8 @@ class App extends React.Component {
         gainNode.connect(audioContext.destination);
         pbSource.connect(gainNode);
         const offset = pbValues.offset * buf.duration;
-        pbSource.playbackRate.value = pbValues.rate/(birds[pbValues.birdNum].headSize/(svgWidth/10));
+      
+        pbSource.playbackRate.value = 25 * pbValues.rate/(birds[pbValues.birdNum].headSize/4);
         pbSource.start(0, offset, pbValues.playLength);
         // this.setState({isPlaying: true});
     }
