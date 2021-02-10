@@ -561,8 +561,8 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
         
         case BirdActionTypes.CHECK_POP_SIZE : 
             const poppingBirds = [...state.birds].map(bird => {
-                bird.headSize > state.svgHeight/3 ? bird.popping = true : bird.notPopping = true;
-                bird.headSize > state.svgHeight/3 ? bird.pop = true : bird.pop = false;
+                bird.headSize > state.svgHeight/4.5 ? bird.popping = true : bird.notPopping = true;
+                bird.headSize > state.svgHeight/4.5 ? bird.pop = true : bird.pop = false;
                 return bird
             })
 

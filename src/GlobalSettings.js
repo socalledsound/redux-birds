@@ -16,7 +16,7 @@ const GlobalSettings = {
     settledOpacity: 0.2,
     scrubSensitivity: 10,
     mainGrowProb : 0.99,
-    dragGrowInc : 2,
+    dragGrowInc : 0.5,
     bumpJumpMin: 5.0,
     bumpJumpMax: 15.0,
 
