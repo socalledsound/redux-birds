@@ -43,6 +43,8 @@ import {
     updateDraggingBird,
     checkOffScreen, 
     checkTooSmall,
+    checkPopSize,
+    popBird,
 } from './redux/birds.actions';
 
 import MainView from './components/MainView';
@@ -148,7 +150,8 @@ class App extends React.Component {
                     birds, checkNeighborBirds,growBird,resetFluttering, decrementFlutterCount,
                     moveBirds, checkEdges, resetTriggerSoundAsync, triggerBouncing,
                     decrementBounceCount, resetBouncing, updateDraggingBird, resetBird,
-                checkOffScreen, checkTooSmall, updateBeingPlayedBird } = this.props;
+                checkOffScreen, checkTooSmall, updateBeingPlayedBird,
+                checkPopSize, popBird } = this.props;
             // const { hatchCount } = this.state
          
             
@@ -189,14 +192,17 @@ class App extends React.Component {
                     }
 
 
-
+                    
 
                     // birds.forEach(bird => );
 
 
                     birds.forEach( bird => {
                         Math.random() > GlobalSettings.mainGrowProb && growBird(bird.id); 
-
+                        checkPopSize(bird);
+                        if(bird.popping){
+                            popBird(bird);
+                        }
                         checkNeighborBirds(bird.id);
                     
 
@@ -587,6 +593,8 @@ const mapDispatchToProps = dispatch => ({
     updateDraggingBird : (idx, mousePos) => dispatch(updateDraggingBird(idx, mousePos)),
     checkOffScreen : () => dispatch(checkOffScreen()),
     checkTooSmall : () => dispatch(checkTooSmall()),
+    checkPopSize : bird => dispatch(checkPopSize(bird)),
+    popBird : bird => dispatch(popBird(bird)),
 })
 
 

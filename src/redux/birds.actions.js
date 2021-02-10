@@ -385,4 +385,17 @@ export const moveEyes = () => {
     }
 }
 
+export const checkPopSize = () => {
+    return {
+        type: BirdActionTypes.CHECK_POP_SIZE,
+    }
+}
+
+export const popBird = () => {
+    return {
+        type: BirdActionTypes.POP_BIRD,
+    }
+}
+
+
 

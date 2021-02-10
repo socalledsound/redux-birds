@@ -87,14 +87,18 @@ class HelloBlue extends React.Component {
   render() {
     const { u_time, xFactor = 1, yFactor=1, iResolution, birds } = this.props;
     console.log(xFactor, yFactor);
-    const glow0 = [birds[0].location.x, birds[0].location.y];
-    const glow1 = [birds[1].location.x, birds[1].location.y];
-    const glow2 = [birds[2].location.x, birds[2].location.y];
+
+    const glows = birds.map( bird => {
+      return [bird.location.x, bird.location.y];
+    })
+   
+    // const glow1 = [birds[1].location.x, birds[1].location.y];
+    // const glow2 = [birds[2].location.x, birds[2].location.y];
     
       return (
         <div>
           
-        <Node shader={shaders.helloBlue} uniforms={{ u_time, xFactor, yFactor, iResolution, glow1, glow2, glow0 }} />
+        <Node shader={shaders.helloBlue} uniforms={{ u_time, xFactor, yFactor, iResolution }} />
       
         </div>
       )

@@ -51,17 +51,9 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
     switch(action.type) {
 
         case BirdActionTypes.RESIZE_SCREEN :
-           // console.log(state.currentIDX);
-            // const resizedBirdsArray = Array.from({ length : state.currentIDX }, (_, i) => {
-            //     if( state.currentIDX !== 0){
-            //         // console.log(resized[i]);
-            //         return new BirdData(state.birdBaseValues[i],  action.payload.width, action.payload.height)
-            //     } else {
-            //         return null
-            //     }
             console.log(state.birdBaseValues); 
             const resizedBirdsArray = [...state.birdBaseValues].map(bb => new BirdData(bb, action.payload.width, action.payload.height));
-        console.log(resizedBirdsArray);
+            console.log(resizedBirdsArray);
             return {
                 ...state,
                 svgWidth: action.payload.width,
@@ -70,7 +62,7 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
                 birds: resizedBirdsArray,
             }
         case BirdActionTypes.UPDATE_BUFFERS :
-            //console.log(action.payload);
+           
             return {
                 ...state,
                 buffers: action.payload.buffers
@@ -90,8 +82,7 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
             }   
             
         case BirdActionTypes.HATCH_BIRDS : 
-        console.log(state.birds, 'in reducer');
-        console.log(action.payload, 'in reducer');
+
         const updatedBirds = [...state.birds];
         if(updatedBirds.length > 0){
             updatedBirds.map( bird => bird.headSize = bird.startTween[action.payload.idx]);
@@ -179,7 +170,7 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
                     bird.velocity.x *= bird.flutterFriction;
                     bird.velocity.y *= bird.flutterFriction;
                 } else if(bird.dragging){
-                    console.log('dragging bird');
+                    
                     bird.location.x += bird.velocity.x;
                     bird.location.y += bird.velocity.y;
                     bird.velocity.x *= bird.dragFriction;
@@ -294,7 +285,7 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
 
 
             case BirdActionTypes.RESET_BIRD : 
-            console.log('shopuld reset bird here');
+          
             const resetPlayBirds = [...state.birds];
 
             resetPlayBirds[action.payload.idx].beingPlayed = false; 
@@ -309,9 +300,7 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
             
             case BirdActionTypes.GROW_BIRD : 
            
-            const growBirds = [...state.birds];
-
-            
+            const growBirds = [...state.birds];            
             if(growBirds[action.payload.idx].clicked || growBirds[action.payload.idx].headSize < 20){
                 growBirds[action.payload.idx].headSize += 5;
                 growBirds[action.payload.idx].growing = true; 
@@ -322,18 +311,7 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
                 ...state,
                 birds: growBirds,
             }   
-            // case BirdActionTypes.GROW_BIRD_CLICKED : 
-            // console.log(action.payload.idx);
-            // const growBirds = [...state.birds];
-
-            // growBirds[action.payload.idx].growing = true; 
-            // growBirds[action.payload.idx].headSize = growBirds[action.payload.idx].headSize + 5; 
-            // // console.log(playBackBirds[action.payload.idx].beingPlayed);
-            // return {
-            //     ...state,
-            //     birds: growBirds,
-            // }              
-            
+                       
         case BirdActionTypes.RUN_ROUTINE : 
             const playNow = generatePlaybackProbability();
             let newPlayBackIndex = state.playBackIndex;
@@ -573,34 +551,24 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
 
             }    
 
-
         case BirdActionTypes.CHECK_FOR_OVERLAPS :
-
-
-            // const overlaps = birds.filter(bird => checkNeighbors(bird, birds));
-            // const notOverlaps = birds.filter(bird => !checkNeighbors(bird, birds));
-            // // console.log(overlaps);
-            // const movedBirds = overlaps.map(bird => {
-            //     const vector = getAntiSocialDirection(bird, overlaps);
-            //     bird.location.x += vector[0];
-            //     bird.location.y += vector[1];
-            //     return bird 
-            //     })
-            // birds.forEach(bird => {
-            //     // console.log(bird.id);
-
-            //     if(checkNeighbors(bird, birds)){
-            //         // const location = getClosestNeighbor(bird, birds);
-            //         console.log(bird.id);
-            //     };
-            // })
 
                 return {
                     ...state,
                     // birds: notOverlaps.concat(movedBirds),
                     // birds
                 }    
-          
+        
+        case BirdActionTypes.CHECK_POP_SIZE : 
+        
+                return {
+                    ...state
+                }
+                case BirdActionTypes.POP_BIRD : 
+        
+                return {
+                    ...state
+                }        
 
         default: 
             return state
@@ -608,3 +576,32 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
 
 
 }
+
+
+// case BirdActionTypes.CHECK_FOR_OVERLAPS :
+
+
+//     // const overlaps = birds.filter(bird => checkNeighbors(bird, birds));
+//     // const notOverlaps = birds.filter(bird => !checkNeighbors(bird, birds));
+//     // // console.log(overlaps);
+//     // const movedBirds = overlaps.map(bird => {
+//     //     const vector = getAntiSocialDirection(bird, overlaps);
+//     //     bird.location.x += vector[0];
+//     //     bird.location.y += vector[1];
+//     //     return bird 
+//     //     })
+//     // birds.forEach(bird => {
+//     //     // console.log(bird.id);
+
+//     //     if(checkNeighbors(bird, birds)){
+//     //         // const location = getClosestNeighbor(bird, birds);
+//     //         console.log(bird.id);
+//     //     };
+//     // })
+
+//         return {
+//             ...state,
+//             // birds: notOverlaps.concat(movedBirds),
+//             // birds
+//         }    
+  
