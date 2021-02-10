@@ -13,7 +13,7 @@ const Beak = ({ x, y, width, height, opacity }) => {
 
     return ( 
 
-        <polygon points={points} fill="yellow" stroke="pink" opacity={opacity}/>
+        <polygon points={points} fill="yellow" stroke="pink" opacity={opacity* 8}/>
      );
 }
  

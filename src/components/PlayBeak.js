@@ -33,7 +33,7 @@ const PlayBeak = ({ x, y, width, height, opacity, beakRoll = 0 }) => {
 
     return ( 
 
-        <polygon points={points} fill="yellow" stroke="pink" opacity={opacity}/>
+        <polygon points={points} fill="yellow" stroke="pink" opacity='1.0'/>
      );
 }
  

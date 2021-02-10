@@ -41,7 +41,7 @@ class BirdData {
         this.breatheRate = Math.random()/10;
         this.eyeRollOffset = {x: 0, y: 0};
         this.theta = 0;
-        this.opacity = 1.0;
+        this.opacity = 0.1;
         this.beingPlayedCount = 0;
         this.showing= false;
         this.eyeToggle  = false;
