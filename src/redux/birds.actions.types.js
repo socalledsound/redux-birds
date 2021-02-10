@@ -47,6 +47,6 @@ export const BirdActionTypes = {
     CHECK_OFFSCREEN : 'CHECK_OFFSCREEN',
     CHECK_TOOSMALL : 'CHECK_TOOSMALL',
     CHECK_POP_SIZE : 'CHECK_POP_SIZE',
-    POP_BIRD : 'POP_BIRD'
+    POP_BIRD : 'POP_BIRD',
 
 }
