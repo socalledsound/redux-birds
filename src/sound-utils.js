@@ -1,7 +1,7 @@
 // import soundFile0 from './assets/sounds/0.mp3';
-import soundFile0 from './assets/sounds/0.mp3';
+import soundFile0 from './assets/sounds/2.mp3';
 import soundFile1 from './assets/sounds/1.mp3';
-import soundFile2 from './assets/sounds/2.mp3';
+import soundFile2 from './assets/sounds/0.mp3';
 import soundFile3 from './assets/sounds/3.mp3';
 import soundFile4 from './assets/sounds/4.mp3'
 import soundFile5 from './assets/sounds/5.mp3';

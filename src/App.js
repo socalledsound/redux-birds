@@ -397,7 +397,7 @@ class App extends React.Component {
      playSound(idx, eyeOffsetX, eyeOffsetY){
         const { birds, svgWidth } = this.props;
         const buf = eyeOffsetX < 0 ? this.buffers[idx%GlobalSettings.numSounds] : this.reversedBuffers[idx%GlobalSettings.numSounds];
-        console.log('playing sound:', idx);
+        // console.log('playing sound:', idx);
 
         const scrubValue = (Math.abs(eyeOffsetX)/500)%buf.duration;
         const changedRate = 1.0 - Math.abs(eyeOffsetY/10)/100;
@@ -411,7 +411,8 @@ class App extends React.Component {
         
        this.source = audioContext.createBufferSource();
 
-        let rate = changedRate * 100/birds[idx].headSize/(svgWidth/10);
+        let rate = (25 * changedRate/(birds[idx].headSize/4));
+        console.log(rate);
         if(rate > 2.0){
             rate = 3.0;
         } else if(rate < 0.4){
@@ -421,7 +422,7 @@ class App extends React.Component {
         this.source.connect(audioContext.destination);
         const offset = scrubValue * buf.duration;
         this.source.playbackRate.value = rate;
-        this.source.start(0, offset, 0.25);
+        this.source.start(0, offset, 0.5);
         this.setState({isPlaying: true});
     }
 
@@ -435,13 +436,13 @@ class App extends React.Component {
             x : pbValues.offset * -1  * 100 , 
             y : pbValues.rate * 100 ,
         }
-        console.log(eyeRollOffset);
-        console.log(pbValues, playbackValues, playBackIndex);
+        // console.log(eyeRollOffset);
+        // console.log(pbValues, playbackValues, playBackIndex);
         this.playRoutineSound(pbValues);
         playBird(pbValues.birdNum, eyeRollOffset, Math.floor(pbValues.playLength* 10), pbValues.dir);
         rollEyes(pbValues.birdNum, eyeRollOffset.x, eyeRollOffset.y);
         
-        console.log('started', pbValues.birdNum)
+        // console.log('started', pbValues.birdNum)
         setTimeout(toggleRoutinePlaying, pbValues.playLength * 2000);
     }
     
