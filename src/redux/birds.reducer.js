@@ -533,8 +533,10 @@ export const birdReducer = (state = INITIAL_STATE, action) => {
         case BirdActionTypes.CHANGE_EYE_COLOR : 
             const toggledBirds = [...state.birds];
             const toggle = !toggledBirds[action.payload.id].eyeToggle;
+            const clicked = !toggledBirds[action.payload.id].clicked;
             toggledBirds[action.payload.id].eyeToggle = toggle;
             toggledBirds[action.payload.id].irisColor = toggle ? toggledBirds[action.payload.id].redIrisColor : toggledBirds[action.payload.id].mainIrisColor;
+            toggledBirds[action.payload.id].irisColor = clicked ? toggledBirds[action.payload.id].redIrisColor : toggledBirds[action.payload.id].irisColor;
 
             return {
                 ...state,

@@ -81,6 +81,7 @@ class Bird extends React.Component {
         const { updateClicked } = this.props
         // this.playSound(idx);
         updateClicked(idx);
+        changeEyeColor(idx);
         // startTicker();
     }
 

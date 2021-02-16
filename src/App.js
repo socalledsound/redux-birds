@@ -263,7 +263,7 @@ class App extends React.Component {
                         const eyeOffsetX = mousePos.x - mouseRef.x;
                         const eyeOffsetY = mousePos.y - mouseRef.y;
                         growBird(activeID);
-                        changeEyeColor(activeID);
+                        
                         rollEyes(activeID, eyeOffsetX, eyeOffsetY);
                         updateDraggingBird(activeID, mousePos);
                         let dist = getDistance(this.lastMousePos, mousePos);
